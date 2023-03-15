@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SingupActivity">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/singup_layout"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/main_dog" />
+
+    <LinearLayout
+        android:id="@+id/singup_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:text="이름: "
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/edit_sign_name"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_marginRight="10dp"
+                android:background="@null"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:text="이메일: "
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/edit_sign_email"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_marginRight="10dp"
+                android:background="@null"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_marginTop="10dp"
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:text="비밀번호: "
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/edit_sign_pass"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_marginRight="10dp"
+                android:background="@null"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:text="비밀번호 확인: "
+                android:textSize="18sp" />
+
+            <EditText
+                android:id="@+id/edit_sign_passcheck"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_marginRight="10dp"
+                android:background="@null"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_sign"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_weight="1"
+            android:text="회원가입"
+            android:layout_marginTop="15dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="35dp"/>
+
+
+
+    </LinearLayout>
+
+
+
+
+
+</RelativeLayout>

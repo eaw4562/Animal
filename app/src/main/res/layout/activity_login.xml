@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LoginActivity">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/sigin_layout"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/main_dog" />
+
+
+    <LinearLayout
+        android:id="@+id/sigin_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/edit_email"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:textSize="15sp"
+            android:maxLength="25"
+            android:maxLines="1"
+            android:hint="Email"/>
+
+        <EditText
+            android:id="@+id/edit_pass"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:textSize="15sp"
+            android:maxLines="1"
+            android:inputType="textPassword"
+            android:hint="password"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/edit_pass"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_login"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="로그인"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="35dp"/>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_sign"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:text="회원가입"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="35dp"/>
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/google_sign_in_button"
+            android:text="@string/signin_google"
+            android:background="@drawable/btn_signin_google"
+            android:textColor="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="80dp"/>
+
+
+
+    </LinearLayout>
+    
+
+</RelativeLayout>

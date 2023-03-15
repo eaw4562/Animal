@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".boardWrite">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/board_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="35dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/img_back"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="15dp"
+                android:src="@drawable/baseline_arrow_back_24"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="입양 동물 글쓰기"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/img_check"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginRight="10dp"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/check"/>
+        </RelativeLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/board_toolbar"
+        android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <EditText
+            android:id="@+id/edit_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="제목을 입력해주세요."
+            android:inputType="text"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="카테고리: "
+                android:textSize="16sp"
+                android:textStyle="bold"/>
+
+            <Spinner
+                android:id="@+id/spinner_category"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:spinnerMode="dropdown"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="품종 : "
+                android:textSize="16sp"
+                android:textStyle="bold"/>
+
+            <EditText
+                android:id="@+id/board_breed"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="접종 : "
+                android:textSize="16sp"
+                android:textStyle="bold"/>
+
+            <EditText
+                android:id="@+id/board_vaccine"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="보호 위치 : "
+                android:textSize="16sp"
+                android:textStyle="bold"/>
+
+            <EditText
+                android:id="@+id/board_where"
+                android:hint="주소를 입력해주세요"
+                android:inputType="textPersonName"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="중성화 여부: "
+                android:textSize="16sp"
+                android:textStyle="bold"/>
+
+            <CheckBox
+                android:id="@+id/board_check_true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="O"/>
+
+            <CheckBox
+                android:id="@+id/board_check_false"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="X"/>
+
+        </LinearLayout>
+
+
+        <EditText
+            android:id="@+id/edit_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:hint="내용을 입력해주세요."
+            android:inputType="textMultiLine"
+            android:minHeight="100dp"/>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+        </LinearLayout>
+
+       <ImageButton
+           android:id="@+id/board_camera"
+           android:layout_width="match_parent"
+           android:layout_marginTop="10dp"
+           android:layout_height="40dp"
+           android:src="@drawable/baseline_camera_alt_24"/>
+        <TextView
+            android:text="최대 10장의 사진을 불러올수 있습니다."
+            android:textAlignment="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <ImageView
+                android:id="@+id/board_cameraPreview1"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="35dp"
+                android:scaleType="fitCenter"/>
+
+            <ImageView
+                android:id="@+id/board_cameraPreview2"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="35dp"
+                android:scaleType="fitCenter"/>
+
+            <ImageView
+                android:id="@+id/board_cameraPreview3"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="35dp"
+                android:scaleType="fitCenter"/>
+
+            <ImageView
+                android:id="@+id/board_cameraPreview4"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="35dp"
+                android:scaleType="fitCenter"/>
+
+            <ImageView
+                android:id="@+id/board_cameraPreview2"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="35dp"
+                android:scaleType="fitCenter"/>
+
+            <ImageView
+                android:id="@+id/board_cameraPreview2"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="35dp"
+                android:scaleType="fitCenter"/>
+
+            <ImageView
+                android:id="@+id/board_cameraPreview2"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="35dp"
+                android:scaleType="fitCenter"/>
+
+            <ImageView
+                android:id="@+id/board_cameraPreview2"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="35dp"
+                android:scaleType="fitCenter"/>
+
+            <ImageView
+                android:id="@+id/board_cameraPreview2"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="35dp"
+                android:scaleType="fitCenter"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+    </ScrollView>
+
+
+</RelativeLayout>
