@@ -9,6 +9,7 @@ import com.example.animal.databinding.ActivitySingupBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
 class SingupActivity : AppCompatActivity() {
@@ -26,14 +27,14 @@ class SingupActivity : AppCompatActivity() {
         fauth = FirebaseAuth.getInstance()
 
         //데이터베이스 초기화 코드
-        DbRef = FirebaseDatabase.getInstance().getReference()
+        DbRef = Firebase.database.reference
 
         //회원가입 버튼 클릭 이벤트
         binding.btnSign.setOnClickListener {
-            val name = binding.editSignName.text.toString()
-            val email = binding.editSignEmail.text.toString()
-            val password = binding.editSignPass.text.toString()
-            val passchek = binding.editSignPasscheck.text.toString()
+            val name = binding.editSignName.text.toString().trim()
+            val email = binding.editSignEmail.text.toString().trim()
+            val password = binding.editSignPass.text.toString().trim()
+            val passchek = binding.editSignPasscheck.text.toString().trim()
 
             if(binding.editSignPass.text.toString().equals( binding.editSignPasscheck.text.toString())){
                 signUp(name,email,password)

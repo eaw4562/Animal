@@ -1,4 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/home"
+        android:enabled="true"
+        android:title="홈"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/menu_home"/>
+
+    <item
+        android:id="@+id/home_two"
+        android:title="동물보호소"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/animal"/>
+
 
 </menu>
