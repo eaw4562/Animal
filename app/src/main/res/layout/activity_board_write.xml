@@ -219,75 +219,14 @@
             android:orientation="horizontal"
             android:layout_marginTop="10dp">
 
-            <ImageView
-                android:id="@+id/board_cameraPreview1"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="35dp"
-                android:scaleType="fitCenter"/>
-
-            <ImageView
-                android:id="@+id/board_cameraPreview2"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="35dp"
-                android:scaleType="fitCenter"/>
-
-            <ImageView
-                android:id="@+id/board_cameraPreview3"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="35dp"
-                android:scaleType="fitCenter"/>
-
-            <ImageView
-                android:id="@+id/board_cameraPreview4"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="35dp"
-                android:scaleType="fitCenter"/>
-
-            <ImageView
-                android:id="@+id/board_cameraPreview5"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="35dp"
-                android:scaleType="fitCenter"/>
-
-            <ImageView
-                android:id="@+id/board_cameraPreview6"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="35dp"
-                android:scaleType="fitCenter"/>
-
-            <ImageView
-                android:id="@+id/board_cameraPreview7"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="35dp"
-                android:scaleType="fitCenter"/>
-
-            <ImageView
-                android:id="@+id/board_cameraPreview8"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="35dp"
-                android:scaleType="fitCenter"/>
-
-            <ImageView
-                android:id="@+id/board_cameraPreview9"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="35dp"
-                android:scaleType="fitCenter"/>
-
-            <ImageView
-                android:id="@+id/board_cameraPreview10"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="35dp"
-                android:scaleType="fitCenter"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/image_recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="16dp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
 
         </LinearLayout>

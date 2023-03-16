@@ -5,11 +5,15 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.example.animal.Adpater.GalleryAdapter
 import com.example.animal.DTO.ContentDTO
 import com.example.animal.databinding.ActivityBoardWriteBinding
 import com.google.android.gms.tasks.Task
@@ -20,6 +24,7 @@ import com.google.firebase.storage.UploadTask
 import java.text.SimpleDateFormat
 import java.util.Date
 
+//https://aries574.tistory.com/453?category=375976 참고
 class BoardWrite : AppCompatActivity() {
     private val PICK_IMAGE_FROM_ALBUM = 0
     private var storage : FirebaseStorage? = null
@@ -27,20 +32,28 @@ class BoardWrite : AppCompatActivity() {
     private lateinit var binding : ActivityBoardWriteBinding
     private var auth : FirebaseAuth? = null
     private var firestore : FirebaseFirestore? = null
+    lateinit var galleryAdapter : GalleryAdapter
+
+    var imageList : ArrayList<Uri> = ArrayList()
 
 
     // Camera Preview의 ImageView를 리스트 cameraPreviewList에 담아 cameraPreviewIndex 변수를 사용하여 하나씩 표시하도록 구현
     private val cameraPreviewList = mutableListOf<ImageView>()
     private var cameraPreviewIndex = 0
 
-    private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()){uri: Uri? ->
-        uri?.let{
-            if(cameraPreviewIndex < cameraPreviewList.size){
-                Glide.with(this).load(selectedImageUri).into(cameraPreviewList[cameraPreviewIndex])
-                cameraPreviewIndex++
+   /* private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        uri?.let {
+            for (i in cameraPreviewList.indices) {
+                if (cameraPreviewIndex < cameraPreviewList.size) {
+                    Glide.with(this).load(uri).into(cameraPreviewList[cameraPreviewIndex])
+                    cameraPreviewIndex++
+                    break
+                }
             }
         }
-    }
+    }*/
+
+
 
     //스피너 코드
     private val categoryList = listOf("강아지","고양이","기타")
@@ -50,9 +63,6 @@ class BoardWrite : AppCompatActivity() {
             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         }
     }
-
-    //체크박스 코드
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,8 +74,24 @@ class BoardWrite : AppCompatActivity() {
         storage = FirebaseStorage.getInstance()
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
+        galleryAdapter = GalleryAdapter(imageList, this)
 
-        // Camera Preview ImageView 초기화
+        binding.imageRecyclerView.layoutManager = LinearLayoutManager(this)
+        binding.imageRecyclerView.adapter = galleryAdapter
+
+        binding.boardCamera.setOnClickListener {
+            //갤러리 호출
+            val intent = Intent(Intent.ACTION_PICK)
+            intent.type = "image/*"
+            //멀티 선택 가능
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+            activityResult.launch(intent)
+        }
+
+
+
+
+        /* Camera Preview ImageView 초기화
         cameraPreviewList.apply {
             add(binding.boardCameraPreview1)
             add(binding.boardCameraPreview2)
@@ -77,41 +103,44 @@ class BoardWrite : AppCompatActivity() {
             add(binding.boardCameraPreview8)
             add(binding.boardCameraPreview9)
             add(binding.boardCameraPreview10)
-        }
+        }*/
 
         //앨범 오픈
-        binding.boardCamera.setOnClickListener {
-            pickImage.launch("image/*")
-        }
+        //binding.boardCamera.setOnClickListener {
+        //    pickImage.launch("image/*")
+       // }
 
         //스피너 설정
         binding.spinnerCategory.adapter = spinnerAdapter
 
         //open album
-        var photoPickerIntent = Intent(Intent.ACTION_PICK)
-        photoPickerIntent.type = "image/*"
-        startActivityForResult(photoPickerIntent, PICK_IMAGE_FROM_ALBUM)
+       // var photoPickerIntent = Intent(Intent.ACTION_PICK)
+      //  photoPickerIntent.type = "image/*"
+        //startActivityForResult(photoPickerIntent, PICK_IMAGE_FROM_ALBUM)
 
         //글쓰기 버튼 클릭
-        binding.btnUpload.setOnClickListener {
-            contentUpload()
-            val intent : Intent = Intent(this@BoardWrite, MainActivity::class.java)
-            startActivity(intent)
-        }
-
 
     }
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if(requestCode == PICK_IMAGE_FROM_ALBUM){
-            if(resultCode == Activity.RESULT_OK){
-                //사진 선택시 경로
-                selectedImageUri = data?.data
-                binding.boardCamera.setImageURI(selectedImageUri)
-            }else{
-                //취소 버튼 눌럿을때 경로
-                finish()
+    private val activityResult : ActivityResultLauncher<Intent> = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()){
+        //결과 코드 Ok, 결과값 null 아니면
+        if(it.resultCode == RESULT_OK){
+            //멀티 선택은 clipDate
+            if(it.data!!.clipData != null){
+                //선택한 이미지 갯수
+                val count = it.data!!.clipData!!.itemCount
+
+                for(index in 0 until count){
+                    //이미지 담기
+                    val imageUri = it.data!!.clipData!!.getItemAt(index).uri
+                    //이미지 추가
+                    imageList.add(imageUri)
+                }
+            }else{ //싱글 이미지
+                val imageUri = it.data!!.data
+                imageList.add(imageUri!!)
             }
+            galleryAdapter.notifyDataSetChanged()
         }
     }
 
@@ -189,3 +218,4 @@ class BoardWrite : AppCompatActivity() {
     }
 
 }
+
