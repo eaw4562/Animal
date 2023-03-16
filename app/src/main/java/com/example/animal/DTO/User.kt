@@ -1,4 +1,4 @@
-package com.example.animal
+package com.example.animal.DTO
 
 data class User(
     var name: String,

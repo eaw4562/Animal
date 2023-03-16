@@ -28,8 +28,9 @@
             android:layout_height="48dp"
             android:textSize="15sp"
             android:maxLength="25"
-            android:maxLines="1"
-            android:hint="Email"/>
+            android:inputType="text"
+            android:hint="Email"
+            android:imeOptions="actionNext"/>
 
         <EditText
             android:id="@+id/edit_pass"
@@ -38,7 +39,8 @@
             android:textSize="15sp"
             android:maxLines="1"
             android:inputType="textPassword"
-            android:hint="password"/>
+            android:hint="password"
+            android:imeOptions="actionGo"/>
 
         <LinearLayout
             android:layout_width="match_parent"

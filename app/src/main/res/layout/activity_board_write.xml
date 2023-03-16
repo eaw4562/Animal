@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".boardWrite">
+    tools:context=".BoardWrite">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/board_toolbar"
@@ -161,17 +161,24 @@
                 android:textSize="16sp"
                 android:textStyle="bold"/>
 
-            <CheckBox
-                android:id="@+id/board_check_true"
+            <RadioGroup
+                android:id="@+id/radio_group"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="O"/>
+                android:orientation="horizontal">
+                <RadioButton
+                    android:id="@+id/board_radio_true"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="O"/>
 
-            <CheckBox
-                android:id="@+id/board_check_false"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="X"/>
+                <RadioButton
+                    android:id="@+id/board_radio_false"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="X"/>
+            </RadioGroup>
+
 
         </LinearLayout>
 
@@ -284,6 +291,15 @@
 
 
         </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_upload"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="작성 완료"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:background="@color/purple_200"/>
 
     </LinearLayout>
     </ScrollView>
