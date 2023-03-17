@@ -1,11 +1,16 @@
 package com.example.animal
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.DocumentsContract
 import android.provider.MediaStore
+import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.Toast
@@ -16,50 +21,41 @@ import com.bumptech.glide.Glide
 import com.example.animal.Adpater.GalleryAdapter
 import com.example.animal.DTO.ContentDTO
 import com.example.animal.databinding.ActivityBoardWriteBinding
+import com.example.animal.databinding.ActivityMainBinding
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
-import java.util.Date
+import java.util.*
+import kotlin.collections.ArrayList
 
-//https://aries574.tistory.com/453?category=375976 참고
+
 class BoardWrite : AppCompatActivity() {
     private val PICK_IMAGE_FROM_ALBUM = 0
-    private var storage : FirebaseStorage? = null
-    private var selectedImageUri : Uri? = null
-    private lateinit var binding : ActivityBoardWriteBinding
-    private var auth : FirebaseAuth? = null
-    private var firestore : FirebaseFirestore? = null
-    lateinit var galleryAdapter : GalleryAdapter
+    private var storage: FirebaseStorage? = null
+    private var selectedImageUri: Uri? = null
+    private lateinit var binding: ActivityBoardWriteBinding
+    private var auth: FirebaseAuth? = null
+    private var firestore: FirebaseFirestore? = null
+    lateinit var galleryAdapter: GalleryAdapter
 
-    var imageList : ArrayList<Uri> = ArrayList()
+    var imageList: ArrayList<Uri> = ArrayList()
 
 
     // Camera Preview의 ImageView를 리스트 cameraPreviewList에 담아 cameraPreviewIndex 변수를 사용하여 하나씩 표시하도록 구현
     private val cameraPreviewList = mutableListOf<ImageView>()
     private var cameraPreviewIndex = 0
 
-   /* private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-        uri?.let {
-            for (i in cameraPreviewList.indices) {
-                if (cameraPreviewIndex < cameraPreviewList.size) {
-                    Glide.with(this).load(uri).into(cameraPreviewList[cameraPreviewIndex])
-                    cameraPreviewIndex++
-                    break
-                }
-            }
-        }
-    }*/
-
-
 
     //스피너 코드
-    private val categoryList = listOf("강아지","고양이","기타")
+    private val categoryList = listOf("강아지", "고양이", "기타")
 
     private val spinnerAdapter by lazy {
-        ArrayAdapter(this,android.R.layout.simple_spinner_item,categoryList).apply {
+        ArrayAdapter(this, android.R.layout.simple_spinner_item, categoryList).apply {
             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         }
     }
@@ -79,6 +75,7 @@ class BoardWrite : AppCompatActivity() {
         binding.imageRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.imageRecyclerView.adapter = galleryAdapter
 
+
         binding.boardCamera.setOnClickListener {
             //갤러리 호출
             val intent = Intent(Intent.ACTION_PICK)
@@ -87,135 +84,152 @@ class BoardWrite : AppCompatActivity() {
             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
             activityResult.launch(intent)
         }
-
-
-
-
-        /* Camera Preview ImageView 초기화
-        cameraPreviewList.apply {
-            add(binding.boardCameraPreview1)
-            add(binding.boardCameraPreview2)
-            add(binding.boardCameraPreview3)
-            add(binding.boardCameraPreview4)
-            add(binding.boardCameraPreview5)
-            add(binding.boardCameraPreview6)
-            add(binding.boardCameraPreview7)
-            add(binding.boardCameraPreview8)
-            add(binding.boardCameraPreview9)
-            add(binding.boardCameraPreview10)
-        }*/
-
-        //앨범 오픈
-        //binding.boardCamera.setOnClickListener {
-        //    pickImage.launch("image/*")
-       // }
-
         //스피너 설정
         binding.spinnerCategory.adapter = spinnerAdapter
 
-        //open album
-       // var photoPickerIntent = Intent(Intent.ACTION_PICK)
-      //  photoPickerIntent.type = "image/*"
-        //startActivityForResult(photoPickerIntent, PICK_IMAGE_FROM_ALBUM)
-
-        //글쓰기 버튼 클릭
-
     }
-    private val activityResult : ActivityResultLauncher<Intent> = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()){
+
+    private val activityResult: ActivityResultLauncher<Intent> = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) {
         //결과 코드 Ok, 결과값 null 아니면
-        if(it.resultCode == RESULT_OK){
+        if (it.resultCode == RESULT_OK) {
             //멀티 선택은 clipDate
-            if(it.data!!.clipData != null){
+            if (it.data!!.clipData != null) {
                 //선택한 이미지 갯수
                 val count = it.data!!.clipData!!.itemCount
 
-                for(index in 0 until count){
+                for (index in 0 until count) {
                     //이미지 담기
                     val imageUri = it.data!!.clipData!!.getItemAt(index).uri
                     //이미지 추가
                     imageList.add(imageUri)
                 }
-            }else{ //싱글 이미지
+            } else { //싱글 이미지
                 val imageUri = it.data!!.data
                 imageList.add(imageUri!!)
             }
             galleryAdapter.notifyDataSetChanged()
+
+        }
+        binding.btnUpload.setOnClickListener {
+            contentUpload()
+            val intent: Intent = Intent(this@BoardWrite, MainActivity::class.java)
+            startActivity(intent)
         }
     }
 
 
-    fun contentUpload(){
+    fun contentUpload() {
+        val imageUrlList = ArrayList<String>()
 
-        //Firebase storage에 저장할 이미지 파일 이름 생성
-        var timestamp = SimpleDateFormat("yyyyMMDD_HHmmss").format(Date())
-        var imageFileName = "IMAGE_" + timestamp + "_png"
+        // Firebase storage에 저장할 이미지 파일 이름 생성
+        val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
 
-        //이미지가 저장될 경로 지정
-        var storageRef = storage?.reference?.child("images")?.child(imageFileName)
+        // 각각의 이미지를 Firebase Storage에 업로드
+        imageList.forEachIndexed { index, imageUri ->
+            val imageFileName = "IMAGE_" + timestamp + "_$index" + "_png"
+            val filePath = getRealPathFromURI(this@BoardWrite, imageUri)
 
-        // Uri.EMPTY로 초기화
-        var uri = selectedImageUri ?: Uri.EMPTY
+            // BitmapFactory를 사용하여 해당 이미지 파일을 Bitmap 객체로 변환하고, 크기를 줄여줍니다.
+            // 이미지 파일을 Firebase Storage에 업로드합니다.
+            val storageRef = storage?.reference?.child("images")?.child(imageFileName)
+            val outputStream = ByteArrayOutputStream()
 
+            // BitmapFactory를 사용하여 해당 이미지 파일을 Bitmap 객체로 변환하고, 크기를 줄여줍니다.
+            val bitmap = BitmapFactory.decodeFile(filePath)
+            val resizedBitmap = Bitmap.createScaledBitmap(bitmap, 640, 640, false)
 
-        //Firebase Storage에 파일 업로드(Promise method
-        storageRef?.putFile(selectedImageUri!!)?.continueWith{ task : Task<UploadTask.TaskSnapshot> ->
-            return@continueWith storageRef.downloadUrl
-        }?.addOnSuccessListener { uri ->
+            // 이미지 파일을 압축하여 outputStream에 씁니다.
+            resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream)
 
-            // contentDTO 객체 생성
-            var contentDTO = ContentDTO().apply {
+            // outputStream을 ByteArray로 변환합니다.
+            val data = outputStream.toByteArray()
 
-                //글 제목
-                title = binding.editTitle.text.toString()
+            // 이미지 파일을 Firebase Storage에 업로드합니다.
+            val uploadTask = storageRef?.putBytes(data)
 
-                // 카테고리 삽입
-                category = categoryList[binding.spinnerCategory.selectedItemPosition]
-
-                //픔종
-                breed = binding.boardBreed.text.toString()
-
-                //백신 접종
-                vaccine = binding.boardVaccine.text.toString()
-
-                //주소(업데이트 예정)
-                where = binding.boardWhere.text.toString()
-
-                // 라디오 버튼 상태 저장
-                if (binding.boardRadioTrue.isChecked) {
-                    // "O"가 선택된 경우
-                    radio = "O"
-                } else if (binding.boardRadioFalse.isChecked) {
-                    // "X"가 선택된 경우
-                    radio = "X"
+            // 업로드된 이미지 파일의 URL을 imageUrlList에 추가합니다.
+            uploadTask?.continueWithTask { task ->
+                if (!task.isSuccessful) {
+                    task.exception?.let { throw it }
                 }
+                storageRef.downloadUrl
+            }?.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val downloadUri = task.result.toString()
+                    imageUrlList.add(downloadUri)
 
-                // 내용 삽입
-                content = binding.editContent.text.toString()
+                    // 모든 이미지 파일의 업로드가 완료되면 firestore에 데이터를 저장합니다.
+                    if (imageUrlList.size == imageList.size) {
+                        val contentDTO = ContentDTO().apply {
+                            //글 제목
+                            title = binding.editTitle.text.toString()
 
-                // 이미지 URL 삽입
-                imageUrl = uri?.toString() ?: ""
+                            // 카테고리 삽입
+                            category = categoryList[binding.spinnerCategory.selectedItemPosition]
 
-                // user uid 삽입
-                uid = auth?.currentUser?.uid
+                            //픔종
+                            breed = binding.boardBreed.text.toString()
 
-                // user id 삽입
-                userId = auth?.currentUser?.email
+                            //백신 접종
+                            vaccine = binding.boardVaccine.text.toString()
 
-                //시간
-              //  timestamp = System.currentTimeMillis()
+                            //주소(업데이트 예정)
+                            where = binding.boardWhere.text.toString()
 
+                            // 라디오 버튼 상태 저장
+                            if (binding.boardRadioTrue.isChecked) {
+                                // "O"가 선택된 경우
+                                radio = "O"
+                            } else if (binding.boardRadioFalse.isChecked) {
+                                // "X"가 선택된 경우
+                                radio = "X"
+                            }
+
+                            // 내용 삽입
+                            content = binding.editContent.text.toString()
+
+                            //이미지 URL 삽입
+                            imageUrl = imageUrlList.joinToString(separator = ",")
+
+                            // user uid 삽입
+                            uid = auth?.currentUser?.uid
+
+                            // user id 삽입
+                            userId = auth?.currentUser?.email
+
+                            //시간
+                            var timestamp = System.currentTimeMillis()
+                        }
+
+                        firestore?.collection("images")?.add(contentDTO)
+                            ?.addOnSuccessListener { documentReference ->
+                                setResult(Activity.RESULT_OK)
+                                finish()
+                            }?.addOnFailureListener { e ->
+                                Log.w("TAG", "Error adding document", e)
+                            }
+                    }
+                } else {
+                    Log.w("TAG", "uploadTask failed")
+                }
             }
 
-            // firestore에 데이터 저장
-            firestore?.collection("images")?.document()?.set(contentDTO)
-
-            setResult(Activity.RESULT_OK)
-
-            finish()
-
         }
     }
-
 }
 
+    fun getRealPathFromURI(context: Context, uri: Uri): String {
+        var filePath = ""
+
+        val projection = arrayOf(MediaStore.Images.Media.DATA)
+        val cursor = context.contentResolver.query(uri, projection, null, null, null)
+
+        if (cursor != null && cursor.moveToFirst()) {
+            val columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+            filePath = cursor.getString(columnIndex)
+            cursor.close()
+        }
+        return filePath
+    }
