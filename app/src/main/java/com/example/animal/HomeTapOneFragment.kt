@@ -37,12 +37,12 @@ class HomeTapOneFragment : Fragment() {
         recyclerView.adapter = boardAdapter
 
         // Firebase에서 데이터 가져오기
-        FirebaseFirestore.getInstance().collection("contents")
+        FirebaseFirestore.getInstance().collection("images")
             .get()
             .addOnSuccessListener { documents ->
                 for (document in documents) {
                     val contentDTO = document.toObject(ContentDTO::class.java)
-                    itemList.add(Item(contentDTO.title!!, contentDTO.price!!, contentDTO.imageUrl!!))
+                    itemList.add(Item(contentDTO.title!!, contentDTO.price, contentDTO.imageUrl!!))
                 }
                 // 데이터 변경 감지
                 boardAdapter.notifyDataSetChanged()
