@@ -124,7 +124,7 @@ class BoardWrite : AppCompatActivity() {
         val imageUrlList = ArrayList<String>()
 
         // Firebase storage에 저장할 이미지 파일 이름 생성
-        val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        var timestamp = SimpleDateFormat("yyyyMMDD_HHmmss").format(Date())
 
         // 각각의 이미지를 Firebase Storage에 업로드
         imageList.forEachIndexed { index, imageUri ->
@@ -166,8 +166,20 @@ class BoardWrite : AppCompatActivity() {
                             //글 제목
                             title = binding.editTitle.text.toString()
 
+                            if (binding.boardRadioMan.isChecked) {
+                                //'남자 선택'
+                                gender = "남아"
+                            }else if(binding.boardRadioWomen.isChecked){
+                                // '여자' 선택
+                                gender = "여아"
+                            }
+
                             // 카테고리 삽입
                             category = categoryList[binding.spinnerCategory.selectedItemPosition]
+
+                            age = binding.boardAge.text.toString()
+
+                            price = binding.boardPrice.text.toString()
 
                             //픔종
                             breed = binding.boardBreed.text.toString()
@@ -179,12 +191,12 @@ class BoardWrite : AppCompatActivity() {
                             where = binding.boardWhere.text.toString()
 
                             // 라디오 버튼 상태 저장
-                            if (binding.boardRadioTrue.isChecked) {
+                            if (binding.boardRadioSpay.isChecked) {
                                 // "O"가 선택된 경우
-                                radio = "O"
-                            } else if (binding.boardRadioFalse.isChecked) {
+                                spay = "O"
+                            } else if (binding.boardRadioSpayFalse.isChecked) {
                                 // "X"가 선택된 경우
-                                radio = "X"
+                                spay = "X"
                             }
 
                             // 내용 삽입
@@ -219,17 +231,3 @@ class BoardWrite : AppCompatActivity() {
         }
     }
 }
-
-    fun getRealPathFromURI(context: Context, uri: Uri): String {
-        var filePath = ""
-
-        val projection = arrayOf(MediaStore.Images.Media.DATA)
-        val cursor = context.contentResolver.query(uri, projection, null, null, null)
-
-        if (cursor != null && cursor.moveToFirst()) {
-            val columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-            filePath = cursor.getString(columnIndex)
-            cursor.close()
-        }
-        return filePath
-    }

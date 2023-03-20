@@ -7,38 +7,40 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatButton
+import androidx.recyclerview.widget.RecyclerView
+import com.example.animal.Adpater.BoardAdapter
+import com.example.animal.DTO.Item
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [BlankFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class HomeTapOneFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
+    private lateinit var boardAdapter: BoardAdapter
+    private var itemList = mutableListOf<Item>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.home_tap_one_fragment, container, false)
+        val view = inflater.inflate(R.layout.home_tap_one_fragment, container, false)
 
+        // RecyclerView 설정
+        boardAdapter = BoardAdapter(itemList)
+        val recyclerView: RecyclerView = view.findViewById(R.id.one_home_recycler)
+        recyclerView.setHasFixedSize(true)
+        if (boardAdapter != null) {
+            recyclerView.adapter = boardAdapter
+        }
 
+        // 아이템 추가
+        itemList.add(Item("아이템 1", "1000원", R.drawable.item1))
+        itemList.add(Item("아이템 2", "2000원", R.drawable.item2))
+        itemList.add(Item("아이템 3", "3000원", R.drawable.item2))
+        itemList.add(Item("아이템 4", "4000원", R.drawable.item1))
+        itemList.add(Item("아이템 5", "5000원", R.drawable.item2))
+
+        // 데이터 변경 감지
+        boardAdapter.notifyDataSetChanged()
+
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -51,23 +53,4 @@ class HomeTapOneFragment : Fragment() {
         }
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment BlankFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            HomeTapOneFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
 }

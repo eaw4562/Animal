@@ -70,6 +70,41 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:text="성별 : "
+                android:textSize="16sp"
+                android:textStyle="bold"/>
+
+            <RadioGroup
+                android:id="@+id/radio_gender_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <RadioButton
+                    android:id="@+id/board_radio_man"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="남아"/>
+
+                <RadioButton
+                    android:id="@+id/board_radio_women"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="여아"/>
+            </RadioGroup>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:text="카테고리: "
                 android:textSize="16sp"
                 android:textStyle="bold"/>
@@ -80,6 +115,27 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:spinnerMode="dropdown"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="나이 : "
+                android:textSize="16sp"
+                android:textStyle="bold"/>
+
+            <EditText
+                android:id="@+id/board_age"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
         </LinearLayout>
 
         <LinearLayout
@@ -167,20 +223,41 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
                 <RadioButton
-                    android:id="@+id/board_radio_true"
+                    android:id="@+id/board_radio_spay"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="O"/>
 
                 <RadioButton
-                    android:id="@+id/board_radio_false"
+                    android:id="@+id/board_radio_spay_false"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="X"/>
             </RadioGroup>
-
-
         </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="가격 : "
+                android:textSize="16sp"
+                android:textStyle="bold"/>
+
+            <EditText
+                android:id="@+id/board_price"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:inputType="number"/>
+        </LinearLayout>
+
 
 
         <EditText
