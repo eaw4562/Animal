@@ -6,8 +6,11 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.example.animal.DTO.ContentDTO
 import com.example.animal.DTO.Item
 import com.example.animal.R
+import com.google.firebase.storage.FirebaseStorage
 
 class BoardAdapter(private val itemList: MutableList<Item>) : RecyclerView.Adapter<BoardAdapter.ViewHolder>() {
 
@@ -20,7 +23,13 @@ class BoardAdapter(private val itemList: MutableList<Item>) : RecyclerView.Adapt
         val item = itemList[position]
         holder.title.text = item.title
         holder.price.text = item.price
-        holder.image.setImageResource(item.imageRes)
+        // Firebase Storage에서 이미지 가져오기
+        val storageReference = FirebaseStorage.getInstance().getReference(item.imageUrl)
+        storageReference.downloadUrl.addOnSuccessListener { uri ->
+            Glide.with(holder.itemView.context)
+                .load(uri)
+                .into(holder.image)
+        }
     }
 
     override fun getItemCount(): Int {

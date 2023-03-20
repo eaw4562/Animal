@@ -3,5 +3,5 @@ package com.example.animal.DTO
 data class Item(
     val title : String,
     val price : String,
-    val imageRes: Int
+    val imageUrl: String
 )
