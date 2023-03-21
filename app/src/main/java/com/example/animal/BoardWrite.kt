@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.ArrayAdapter
-import android.widget.ImageView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,20 +25,13 @@ import kotlin.collections.ArrayList
 
 
 class BoardWrite : AppCompatActivity() {
-    private val PICK_IMAGE_FROM_ALBUM = 0
     var storage: FirebaseStorage? = null
-    private var selectedImageUri: Uri? = null
     private lateinit var binding: ActivityBoardWriteBinding
     private var auth: FirebaseAuth? = null
-    var firestore : FirebaseFirestore? = null
+    var firestore: FirebaseFirestore? = null
     lateinit var galleryAdapter: GalleryAdapter
 
     var imageList: ArrayList<Uri> = ArrayList()
-
-
-    // Camera Preview의 ImageView를 리스트 cameraPreviewList에 담아 cameraPreviewIndex 변수를 사용하여 하나씩 표시하도록 구현
-    private val cameraPreviewList = mutableListOf<ImageView>()
-    private var cameraPreviewIndex = 0
 
 
     //스피너 코드
@@ -120,7 +112,6 @@ class BoardWrite : AppCompatActivity() {
         // Firebase storage에 저장할 이미지 파일 이름 생성
         val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
 
-
         // 각각의 이미지를 Firebase Storage에 업로드
         imageList.forEachIndexed { index, imageUri ->
             val imageFileName = "IMAGE_" + timestamp + "_$index" + "_png"
@@ -195,7 +186,8 @@ class BoardWrite : AppCompatActivity() {
                             }
 
                             //시간
-                            timeStampLong = System.currentTimeMillis()
+                            timeStamp = timestamp
+
 
                             // 내용 삽입
                             content = binding.editContent.text.toString()
@@ -208,7 +200,6 @@ class BoardWrite : AppCompatActivity() {
 
                             // user id 삽입
                             userId = auth?.currentUser?.email
-
                         }
 
                         firestore?.collection("images")?.add(contentDTO)

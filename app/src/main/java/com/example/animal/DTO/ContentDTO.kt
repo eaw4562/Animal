@@ -12,7 +12,6 @@ data class ContentDTO(
     var content : String? = null,
     var imageUrl : String? = null,
     var timeStamp: String? = null, // timeStamp 변수 추가
-    var timeStampLong : Long? = null,
     var price : String? = null,
     //
     var uid : String? = null,

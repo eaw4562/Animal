@@ -61,6 +61,7 @@
         android:layout_below="@id/my_toolbar"
         android:layout_above="@id/main_nav"/>
 
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_main"
         android:layout_width="match_parent"

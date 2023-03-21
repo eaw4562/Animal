@@ -1,12 +1,16 @@
 package com.example.animal.adapter
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.animal.BoardDetailFragment
 import com.example.animal.DTO.Item
 import com.example.animal.R
 import com.google.firebase.storage.FirebaseStorage
@@ -29,6 +33,16 @@ class BoardAdapter(private val itemList: MutableList<Item>) : RecyclerView.Adapt
                 .load(uri)
                 .into(holder.image)
         }
+       holder.itemView.setOnClickListener{
+            val fragment = BoardDetailFragment.newInstance(item.title?.toString() ?: "", item.price?.toString() ?: "", item.imageUrl?.toString() ?: "")
+            val fragmentManager = (holder.itemView.context as AppCompatActivity).supportFragmentManager
+            fragmentManager.beginTransaction()
+                .replace(R.id.fragmentContainerView, fragment)
+                .addToBackStack(null)
+                .commit()
+        }
+
+
     }
 
     override fun getItemCount(): Int {

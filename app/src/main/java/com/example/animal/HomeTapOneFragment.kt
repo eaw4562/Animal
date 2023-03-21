@@ -14,6 +14,7 @@ import com.example.animal.DTO.ContentDTO
 import com.example.animal.DTO.Item
 import com.example.animal.databinding.HomeTapOneFragmentBinding
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 
 class HomeTapOneFragment : Fragment() {
 
@@ -37,8 +38,9 @@ class HomeTapOneFragment : Fragment() {
 
         // Firebase에서 데이터 가져오기
         FirebaseFirestore.getInstance().collection("images")
-            .get()
-            .addOnSuccessListener { documents ->
+            ?.orderBy("timeStamp", Query.Direction.DESCENDING)
+            ?.get()
+            ?.addOnSuccessListener { documents ->
                 for (document in documents) {
                     val contentDTO = document.toObject(ContentDTO::class.java)
                     if (contentDTO.title != null && contentDTO.price != null && contentDTO.imageUrl != null) {
@@ -49,7 +51,7 @@ class HomeTapOneFragment : Fragment() {
                 // 데이터 변경 감지
                 boardAdapter.notifyDataSetChanged()
             }
-            .addOnFailureListener { exception ->
+            ?.addOnFailureListener { exception ->
                 Log.e(TAG, "Error getting documents: ", exception)
             }
 
