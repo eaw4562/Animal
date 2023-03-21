@@ -1,4 +1,4 @@
-package com.example.animal.Adpater
+package com.example.animal.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -7,7 +7,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.animal.DTO.ContentDTO
 import com.example.animal.DTO.Item
 import com.example.animal.R
 import com.google.firebase.storage.FirebaseStorage
@@ -24,7 +23,7 @@ class BoardAdapter(private val itemList: MutableList<Item>) : RecyclerView.Adapt
         holder.title.text = item.title
         holder.price.text = item.price
         // Firebase Storage에서 이미지 가져오기
-        val storageReference = FirebaseStorage.getInstance().getReference(item.imageUrl)
+        val storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(item.imageUrl)
         storageReference.downloadUrl.addOnSuccessListener { uri ->
             Glide.with(holder.itemView.context)
                 .load(uri)

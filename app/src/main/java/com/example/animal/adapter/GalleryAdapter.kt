@@ -1,4 +1,4 @@
-package com.example.animal.Adpater
+package com.example.animal.adapter
 
 import android.content.Context
 import android.net.Uri

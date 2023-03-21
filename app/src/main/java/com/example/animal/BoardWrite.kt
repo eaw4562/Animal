@@ -1,33 +1,24 @@
 package com.example.animal
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.DocumentsContract
-import android.provider.MediaStore
 import android.util.Log
 import android.widget.ArrayAdapter
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
-import com.example.animal.Adpater.GalleryAdapter
+import com.example.animal.adapter.GalleryAdapter
 import com.example.animal.DTO.ContentDTO
 import com.example.animal.databinding.ActivityBoardWriteBinding
-import com.example.animal.databinding.ActivityMainBinding
-import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.UploadTask
-import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
@@ -36,11 +27,11 @@ import kotlin.collections.ArrayList
 
 class BoardWrite : AppCompatActivity() {
     private val PICK_IMAGE_FROM_ALBUM = 0
-    private var storage: FirebaseStorage? = null
+    var storage: FirebaseStorage? = null
     private var selectedImageUri: Uri? = null
     private lateinit var binding: ActivityBoardWriteBinding
     private var auth: FirebaseAuth? = null
-    private var firestore: FirebaseFirestore? = null
+    var firestore : FirebaseFirestore? = null
     lateinit var galleryAdapter: GalleryAdapter
 
     var imageList: ArrayList<Uri> = ArrayList()
@@ -87,6 +78,12 @@ class BoardWrite : AppCompatActivity() {
         //스피너 설정
         binding.spinnerCategory.adapter = spinnerAdapter
 
+        binding.btnUpload.setOnClickListener {
+            contentUpload()
+            val intent: Intent = Intent(this@BoardWrite, MainActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 
     private val activityResult: ActivityResultLauncher<Intent> = registerForActivityResult(
@@ -112,19 +109,17 @@ class BoardWrite : AppCompatActivity() {
             galleryAdapter.notifyDataSetChanged()
 
         }
-        binding.btnUpload.setOnClickListener {
-            contentUpload()
-            val intent: Intent = Intent(this@BoardWrite, MainActivity::class.java)
-            startActivity(intent)
-        }
+
     }
 
 
     fun contentUpload() {
+
         val imageUrlList = ArrayList<String>()
 
         // Firebase storage에 저장할 이미지 파일 이름 생성
-        var timestamp = SimpleDateFormat("yyyyMMDD_HHmmss").format(Date())
+        val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+
 
         // 각각의 이미지를 Firebase Storage에 업로드
         imageList.forEachIndexed { index, imageUri ->
@@ -199,6 +194,9 @@ class BoardWrite : AppCompatActivity() {
                                 spay = "X"
                             }
 
+                            //시간
+                            timeStampLong = System.currentTimeMillis()
+
                             // 내용 삽입
                             content = binding.editContent.text.toString()
 
@@ -211,8 +209,6 @@ class BoardWrite : AppCompatActivity() {
                             // user id 삽입
                             userId = auth?.currentUser?.email
 
-                            //시간
-                            var timestamp = System.currentTimeMillis()
                         }
 
                         firestore?.collection("images")?.add(contentDTO)

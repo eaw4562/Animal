@@ -1,6 +1,5 @@
 package com.example.animal
 
-import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -10,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.animal.Adpater.BoardAdapter
+import com.example.animal.adapter.BoardAdapter
 import com.example.animal.DTO.ContentDTO
 import com.example.animal.DTO.Item
 import com.example.animal.databinding.HomeTapOneFragmentBinding
@@ -42,13 +41,13 @@ class HomeTapOneFragment : Fragment() {
             .addOnSuccessListener { documents ->
                 for (document in documents) {
                     val contentDTO = document.toObject(ContentDTO::class.java)
-                    itemList.add(Item(contentDTO.title!!, contentDTO.price, contentDTO.imageUrl!!))
+                    if (contentDTO.title != null && contentDTO.price != null && contentDTO.imageUrl != null) {
+                        val item = Item(contentDTO.title, contentDTO.price, contentDTO.imageUrl!!)
+                        itemList.add(item)
+                    }
                 }
                 // 데이터 변경 감지
                 boardAdapter.notifyDataSetChanged()
-
-                // RecyclerView에 Adapter 설정
-                recyclerView.adapter = boardAdapter
             }
             .addOnFailureListener { exception ->
                 Log.e(TAG, "Error getting documents: ", exception)
