@@ -21,6 +21,8 @@ class HomeTapOneFragment : Fragment() {
     private lateinit var boardAdapter: BoardAdapter
     private var itemList = mutableListOf<Item>()
     private lateinit var binding : HomeTapOneFragmentBinding
+    private var uid = mutableListOf<String>()
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,22 +40,23 @@ class HomeTapOneFragment : Fragment() {
 
         // Firebase에서 데이터 가져오기
         FirebaseFirestore.getInstance().collection("images")
-            ?.orderBy("timeStamp", Query.Direction.DESCENDING)
-            ?.get()
-            ?.addOnSuccessListener { documents ->
+            .orderBy("timeStamp", Query.Direction.DESCENDING)
+            .get()
+            .addOnSuccessListener { documents ->
                 for (document in documents) {
                     val contentDTO = document.toObject(ContentDTO::class.java)
                     if (contentDTO.title != null && contentDTO.price != null && contentDTO.imageUrl != null) {
-                        val item = Item(contentDTO.title, contentDTO.price, contentDTO.imageUrl!!)
+                        val item = Item(contentDTO.title, contentDTO.price, contentDTO.imageUrl!!, document.id)
                         itemList.add(item)
                     }
                 }
                 // 데이터 변경 감지
                 boardAdapter.notifyDataSetChanged()
             }
-            ?.addOnFailureListener { exception ->
+            .addOnFailureListener { exception ->
                 Log.e(TAG, "Error getting documents: ", exception)
             }
+
 
         return view
     }

@@ -84,26 +84,23 @@ class BoardDetailFragment : Fragment() {
 
     private fun getDataBoard() {
         val db = FirebaseFirestore.getInstance()
-        val documentId = arguments?.getString("documentId")
+        val uid = arguments?.getString("uid")
 
-        if (documentId != null) {
-            db.collection("images")
-                .whereEqualTo(FieldPath.documentId(), documentId)
+        if (uid != null) {
+            FirebaseFirestore.getInstance().collection("images").document(uid)
                 .get()
-                .addOnSuccessListener { documents ->
-                    for (document in documents) {
-                        name = document.getString("name")
-                        imageUrl = document.getString("imageUrl")?.split(",")
-                        category = document.getString("category")
-                        age = document.getString("age")
-                        gender = document.getString("gender")
-                        breed = document.getString("breed")
-                        vaccine = document.getString("vaccine")
-                        where = document.getString("where")
-                        spay = document.getString("spay")
-                        spay = if (spay == "O") "중성화 O" else "중성화 X"
-                        content = document.getString("content")
-                    }
+                .addOnSuccessListener { document ->
+                    name = document.getString("name")
+                    imageUrl = document.getString("imageUrl")?.split(",")
+                    category = document.getString("category")
+                    age = document.getString("age")
+                    gender = document.getString("gender")
+                    breed = document.getString("breed")
+                    vaccine = document.getString("vaccine")
+                    where = document.getString("where")
+                    spay = document.getString("spay")
+                    spay = if (spay == "O") "중성화 O" else "중성화 X"
+                    content = document.getString("content")
                     bindData()
                 }
                 .addOnFailureListener { exception ->
@@ -114,7 +111,9 @@ class BoardDetailFragment : Fragment() {
 
 
 
-    companion object {
+
+
+        companion object {
         fun newInstance(
             title: String?,
             price: String?,
