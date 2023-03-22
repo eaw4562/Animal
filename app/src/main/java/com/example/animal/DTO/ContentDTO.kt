@@ -11,8 +11,9 @@ data class ContentDTO(
     var spay : String? = null,
     var content : String? = null,
     var imageUrl : String? = null,
-    var timeStamp: String? = null, // timeStamp 변수 추가
+    var timeStamp: String? = null,
     var price : String? = null,
+    var name : String? = null,
     //
     var uid : String? = null,
     var userId : String? = null

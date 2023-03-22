@@ -3,34 +3,55 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".BoardDetailFragment">
 
-    
+
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp">
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewPager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-    <ImageView
-        android:id="@+id/board_detail_image"
-        android:layout_width="match_parent"
-        android:layout_height="200dp" />
+            <com.tbuonomo.viewpagerdotsindicator.DotsIndicator
+                android:id="@+id/view_dot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:dotsColor="@color/black"
+                app:dotsCornerRadius="16dp"
+                app:dotsSize="10dp"
+                app:dotsSpacing="6dp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerInParent="true"
+                app:dotsWidthFactor="2.5"
+                android:layout_marginBottom="10dp"/>
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/board_detail_images"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <ImageView
+                android:id="@+id/board_detail_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop" />
+        </RelativeLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
-            android:id="@+id/board_detail_title"
+            android:id="@+id/board_detail_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="이름"
-            android:textSize="24sp"
+            android:textSize="30sp"
             android:textStyle="bold"
             android:layout_marginTop="5dp"
             android:layout_marginLeft="5dp"/>
@@ -43,7 +64,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="종류"
-            android:textSize="18sp"
+            android:textSize="22sp"
             android:layout_marginTop="5dp"
             android:layout_marginLeft="5dp"/>
     </LinearLayout>
@@ -55,7 +76,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="성별"
-            android:textSize="16sp"
+            android:textSize="22sp"
             android:layout_marginTop="5dp"
             android:layout_marginLeft="5dp"/>
 
@@ -67,7 +88,7 @@
             android:layout_weight="1"
             android:layout_marginTop="3dp"
             android:hint="성별"
-            android:textSize="16sp" />
+            android:textSize="22sp" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -77,7 +98,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="나이"
-            android:textSize="16sp"
+            android:textSize="22sp"
             android:layout_marginTop="5dp"
             android:layout_marginLeft="5dp"/>
 
@@ -89,7 +110,7 @@
             android:layout_weight="1"
             android:layout_marginTop="3dp"
             android:hint="나이"
-            android:textSize="16sp" />
+            android:textSize="22sp" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -99,7 +120,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="품종"
-            android:textSize="16sp"
+            android:textSize="22sp"
             android:layout_marginTop="5dp"
             android:layout_marginLeft="5dp"/>
 
@@ -111,7 +132,7 @@
             android:layout_weight="1"
             android:layout_marginTop="3dp"
             android:hint="품종"
-            android:textSize="16sp" />
+            android:textSize="22sp" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -121,7 +142,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="접종"
-            android:textSize="16sp"
+            android:textSize="22sp"
             android:layout_marginTop="5dp"
             android:layout_marginLeft="5dp"/>
 
@@ -133,7 +154,7 @@
             android:layout_weight="1"
             android:layout_marginTop="3dp"
             android:hint="접종"
-            android:textSize="16sp" />
+            android:textSize="22sp" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -143,7 +164,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="위치"
-            android:textSize="16sp"
+            android:textSize="22sp"
             android:layout_marginTop="5dp"
             android:layout_marginLeft="5dp"/>
 
@@ -155,7 +176,7 @@
             android:layout_weight="1"
             android:layout_marginTop="3dp"
             android:hint="위치"
-            android:textSize="16sp" />
+            android:textSize="22sp" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -165,26 +186,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="중성화 여부"
-            android:textSize="16sp"
+            android:textSize="22sp"
             android:layout_marginTop="5dp"
             android:layout_marginLeft="5dp"/>
 
         <TextView
-            android:id="@+id/board_detail_neuter"
+            android:id="@+id/board_detail_spay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_weight="1"
             android:layout_marginTop="3dp"
             android:hint="O"
-            android:textSize="16sp" />
+            android:textSize="22sp" />
     </LinearLayout>
     <TextView
         android:id="@+id/board_detail_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="내용"
-        android:textSize="16sp"
+        android:textSize="22sp"
         android:layout_marginTop="5dp"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"

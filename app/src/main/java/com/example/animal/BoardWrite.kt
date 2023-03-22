@@ -163,6 +163,8 @@ class BoardWrite : AppCompatActivity() {
                             // 카테고리 삽입
                             category = categoryList[binding.spinnerCategory.selectedItemPosition]
 
+                            name = binding.boardName.text.toString()
+
                             age = binding.boardAge.text.toString()
 
                             price = binding.boardPrice.text.toString()
