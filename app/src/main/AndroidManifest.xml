@@ -28,7 +28,7 @@
             android:exported="false" />
         <activity
             android:name=".SingupActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
         <activity
             android:name=".LoginActivity"
             android:exported="true">
@@ -41,7 +41,6 @@
         <activity
             android:name=".MainActivity"
             android:exported="false" />
-
     </application>
 
 </manifest>

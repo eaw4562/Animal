@@ -6,13 +6,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
-import androidx.viewpager2.widget.ViewPager2
 import com.example.animal.adapter.BoardDetailPagerAdapter
 import com.example.animal.databinding.FragmentBoardDetailBinding
-import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.ktx.Firebase
 
 
 class BoardDetailFragment : Fragment() {
@@ -75,33 +71,35 @@ class BoardDetailFragment : Fragment() {
         }
         // ViewPager DotIndicator 추후 수정 예정
         // 현재 적용 x
-        val dotsIndicator = binding.viewDot
+      /*  val dotsIndicator = binding.viewDot
         dotsIndicator.setViewPager2(binding.boardDetailImages)
         dotsIndicator.setViewPager2(binding.boardDetailImages)
         dotsIndicator.dotsColor = ContextCompat.getColor(requireContext(), R.color.black)
-        dotsIndicator.selectedDotColor = ContextCompat.getColor(requireContext(), R.color.purple_700)
+        dotsIndicator.selectedDotColor = ContextCompat.getColor(requireContext(), R.color.purple_700)*/
     }
 
     private fun getDataBoard() {
-        val db = FirebaseFirestore.getInstance()
-        val uid = arguments?.getString("uid")
-
+        val uid = arguments?.getString("contentUid")
         if (uid != null) {
             FirebaseFirestore.getInstance().collection("images").document(uid)
                 .get()
                 .addOnSuccessListener { document ->
-                    name = document.getString("name")
-                    imageUrl = document.getString("imageUrl")?.split(",")
-                    category = document.getString("category")
-                    age = document.getString("age")
-                    gender = document.getString("gender")
-                    breed = document.getString("breed")
-                    vaccine = document.getString("vaccine")
-                    where = document.getString("where")
-                    spay = document.getString("spay")
-                    spay = if (spay == "O") "중성화 O" else "중성화 X"
-                    content = document.getString("content")
-                    bindData()
+                    if (document.exists()) {
+                        name = document.getString("name")
+                        imageUrl = document.getString("imageUrl")?.split(",")
+                        category = document.getString("category")
+                        age = document.getString("age")
+                        gender = document.getString("gender")
+                        breed = document.getString("breed")
+                        vaccine = document.getString("vaccine")
+                        where = document.getString("where")
+                        spay = document.getString("spay")
+                        spay = if (spay == "O") "중성화 O" else "중성화 X"
+                        content = document.getString("content")
+                        bindData()
+                    } else {
+                        Log.d("BoardDetailFragment", "No such document")
+                    }
                 }
                 .addOnFailureListener { exception ->
                     Log.d("BoardDetailFragment", "Error getting documents: ", exception)
@@ -111,31 +109,12 @@ class BoardDetailFragment : Fragment() {
 
 
 
-
-
-        companion object {
-        fun newInstance(
-            title: String?,
-            price: String?,
-            imageUrl: String?,
-            age: String?,
-            breed: String?,
-            vaccine: String?,
-            where: String?,
-            spay: String?,
-            content: String?
-        ): BoardDetailFragment {
+    companion object {
+        fun newInstance(contentUid: String?, imageUrl: String?): BoardDetailFragment {
             val fragment = BoardDetailFragment()
             val args = Bundle().apply {
-                putString("name", title)
-                putString("price", price)
+                putString("contentUid", contentUid)
                 putString("imageUrl", imageUrl)
-                putString("age", age)
-                putString("breed", breed)
-                putString("vaccine", vaccine)
-                putString("where", where)
-                putString("spay", spay)
-                putString("content", content)
             }
             fragment.arguments = args
             return fragment

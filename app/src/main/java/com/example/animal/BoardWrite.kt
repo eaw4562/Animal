@@ -202,6 +202,8 @@ class BoardWrite : AppCompatActivity() {
 
                             // user id 삽입
                             userId = auth?.currentUser?.email
+
+                            contentUid = UUID.randomUUID().toString() //게시글 랜덤 값 저장
                         }
 
                         firestore?.collection("images")?.add(contentDTO)

@@ -33,8 +33,8 @@ class BoardAdapter(private val itemList: MutableList<Item>) : RecyclerView.Adapt
                 .load(uri)
                 .into(holder.image)
         }
-        holder.itemView.setOnClickListener{
-            val fragment = BoardDetailFragment.newInstance(item.title, item.price, item.imageUrl, null, null, null, null, null, null)
+        holder.itemView.setOnClickListener {
+            val fragment = BoardDetailFragment.newInstance(item.contentUid, item.imageUrl)
             val fragmentManager = (holder.itemView.context as AppCompatActivity).supportFragmentManager
             fragmentManager.beginTransaction()
                 .replace(R.id.fragmentContainerView, fragment)
