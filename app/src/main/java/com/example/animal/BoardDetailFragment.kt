@@ -9,21 +9,24 @@ import android.view.ViewGroup
 import com.example.animal.adapter.BoardDetailPagerAdapter
 import com.example.animal.databinding.FragmentBoardDetailBinding
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.model.DocumentKey
 
 
 class BoardDetailFragment : Fragment() {
 
     private lateinit var binding: FragmentBoardDetailBinding
-    private var name: String? = null
+    private var name: String? = ""
     private var imageUrl: List<String>? = null
-    private var category: String? = null
-    private var gender: String? = null
-    private var age: String? = null
-    private var breed: String? = null
-    private var vaccine: String? = null
-    private var where: String? = null
-    private var spay: String? = null
-    private var content: String? = null
+    private var category: String? = ""
+    private var gender: String? = "'"
+    private var age: String? = ""
+    private var breed: String? = ""
+    private var vaccine: String? = ""
+    private var where: String? = ""
+    private var spay: String? = ""
+    private var content: String? = ""
+    private var price: String? = ""
+    var firestore: FirebaseFirestore? = null
 
 
     override fun onCreateView(
@@ -44,7 +47,10 @@ class BoardDetailFragment : Fragment() {
             spay = bundle.getString("spay")
             spay = if (spay == "O") "중성화 O" else "중성화 X"
             content = bundle.getString("content")
+            price = bundle.getString("price")
         }
+
+
 
         bindData()
         getDataBoard()
@@ -62,6 +68,7 @@ class BoardDetailFragment : Fragment() {
         binding.boardDetailWhere.text = where
         binding.boardDetailSpay.text = spay
         binding.boardDetailContent.text = content
+        binding.boardDetailPrice.text = price
 
         // ViewPager 어댑터 설정
         if (imageUrl != null) {
@@ -78,14 +85,20 @@ class BoardDetailFragment : Fragment() {
         dotsIndicator.selectedDotColor = ContextCompat.getColor(requireContext(), R.color.purple_700)*/
     }
 
+    /**
+     * TODO: 인자값을 매개로 컬렉션에서 값을 가져오는 코드로 바꿀예정
+     *          해결 완료 contentUid 값을 documentId로 저장해 경로 불러옴
+     */
     private fun getDataBoard() {
-        val uid = arguments?.getString("contentUid")
-        if (uid != null) {
-            FirebaseFirestore.getInstance().collection("images").document(uid)
-                .get()
-                .addOnSuccessListener { document ->
+        firestore = FirebaseFirestore.getInstance()
+        val contentUid = arguments?.getString("contentUid")
+        if (contentUid != null) {
+            firestore?.collection("images")?.document(contentUid)
+                ?.get()
+                ?.addOnSuccessListener { document ->
                     if (document.exists()) {
                         name = document.getString("name")
+                        price = document.getString("price")
                         imageUrl = document.getString("imageUrl")?.split(",")
                         category = document.getString("category")
                         age = document.getString("age")
@@ -101,7 +114,7 @@ class BoardDetailFragment : Fragment() {
                         Log.d("BoardDetailFragment", "No such document")
                     }
                 }
-                .addOnFailureListener { exception ->
+                ?.addOnFailureListener { exception ->
                     Log.d("BoardDetailFragment", "Error getting documents: ", exception)
                 }
         }
@@ -115,6 +128,7 @@ class BoardDetailFragment : Fragment() {
             val args = Bundle().apply {
                 putString("contentUid", contentUid)
                 putString("imageUrl", imageUrl)
+
             }
             fragment.arguments = args
             return fragment

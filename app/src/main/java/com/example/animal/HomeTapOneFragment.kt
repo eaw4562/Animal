@@ -46,7 +46,7 @@ class HomeTapOneFragment : Fragment() {
                 for (document in documents) {
                     val contentDTO = document.toObject(ContentDTO::class.java)
                     if (contentDTO.title != null && contentDTO.price != null && contentDTO.imageUrl != null) {
-                        val item = Item(contentDTO.title, contentDTO.price, contentDTO.imageUrl!!, contentDTO.contentUid)
+                        val item = Item(contentDTO.title, contentDTO.price, contentDTO.imageUrl!!, contentDTO.contentUid, contentDTO.age, contentDTO.breed, contentDTO.category, contentDTO.content, contentDTO.gender, contentDTO.name, contentDTO.price, contentDTO.spay, contentDTO.vaccine, contentDTO.where)
                         itemList.add(item)
                     }
                 }

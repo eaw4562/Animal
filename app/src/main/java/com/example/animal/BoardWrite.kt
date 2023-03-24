@@ -206,8 +206,8 @@ class BoardWrite : AppCompatActivity() {
                             contentUid = UUID.randomUUID().toString() //게시글 랜덤 값 저장
                         }
 
-                        firestore?.collection("images")?.add(contentDTO)
-                            ?.addOnSuccessListener { documentReference ->
+                        firestore?.collection("images")?.document(contentDTO.contentUid!!)?.set(contentDTO)
+                            ?.addOnSuccessListener {
                                 setResult(Activity.RESULT_OK)
                                 finish()
                             }?.addOnFailureListener { e ->
