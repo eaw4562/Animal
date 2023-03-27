@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import com.example.animal.adapter.BoardDetailPagerAdapter
 import com.example.animal.databinding.FragmentBoardDetailBinding
 import com.google.firebase.firestore.FirebaseFirestore
@@ -28,12 +29,19 @@ class BoardDetailFragment : Fragment() {
     private var price: String? = ""
     var firestore: FirebaseFirestore? = null
 
+    private lateinit var progressBar: ProgressBar
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentBoardDetailBinding.inflate(inflater, container, false)
+
+
+        // 프로그래스바 참조
+        progressBar = binding.progressBar
 
         arguments?.let { bundle ->
             imageUrl = bundle.getString("imageUrl")?.split(",")
@@ -50,13 +58,14 @@ class BoardDetailFragment : Fragment() {
             price = bundle.getString("price")
         }
 
-
+        // ProgressBar 표시
+        showProgressBar()
 
         bindData()
         getDataBoard()
-
         return binding.root
     }
+
 
     private fun bindData() {
         binding.boardDetailName.text = name
@@ -113,11 +122,24 @@ class BoardDetailFragment : Fragment() {
                     } else {
                         Log.d("BoardDetailFragment", "No such document")
                     }
+
+                    // ProgressBar 숨기기
+                    hideProgressBar()
                 }
                 ?.addOnFailureListener { exception ->
                     Log.d("BoardDetailFragment", "Error getting documents: ", exception)
+                    // ProgressBar 숨기기
+                    hideProgressBar()
                 }
         }
+    }
+
+    private fun showProgressBar() {
+        binding.progressBar.visibility = View.VISIBLE
+    }
+
+    private fun hideProgressBar() {
+        binding.progressBar.visibility = View.GONE
     }
 
 

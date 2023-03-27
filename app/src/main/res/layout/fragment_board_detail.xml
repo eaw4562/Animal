@@ -5,14 +5,18 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".BoardDetailFragment">
-<ScrollView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
     <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <LinearLayout
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:visibility="gone"/>
+
+        <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -45,7 +49,16 @@
                 android:scaleType="centerCrop" />
         </RelativeLayout>
 
-    <LinearLayout
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
@@ -234,7 +247,8 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginBottom="5dp"/>
-    </LinearLayout>
+                </LinearLayout>
+            </ScrollView>
+        </LinearLayout>
     </RelativeLayout>
-</ScrollView>
 </RelativeLayout>

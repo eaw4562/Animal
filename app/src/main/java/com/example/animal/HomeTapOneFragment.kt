@@ -23,7 +23,6 @@ class HomeTapOneFragment : Fragment() {
     private lateinit var binding : HomeTapOneFragmentBinding
     private var uid = mutableListOf<String>()
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -38,26 +37,6 @@ class HomeTapOneFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = boardAdapter
 
-        // Firebase에서 데이터 가져오기
-        FirebaseFirestore.getInstance().collection("images")
-            .orderBy("timeStamp", Query.Direction.DESCENDING)
-            .get()
-            .addOnSuccessListener { documents ->
-                for (document in documents) {
-                    val contentDTO = document.toObject(ContentDTO::class.java)
-                    if (contentDTO.title != null && contentDTO.price != null && contentDTO.imageUrl != null) {
-                        val item = Item(contentDTO.title, contentDTO.price, contentDTO.imageUrl!!, contentDTO.contentUid, contentDTO.age, contentDTO.breed, contentDTO.category, contentDTO.content, contentDTO.gender, contentDTO.name, contentDTO.price, contentDTO.spay, contentDTO.vaccine, contentDTO.where)
-                        itemList.add(item)
-                    }
-                }
-                // 데이터 변경 감지
-                boardAdapter.notifyDataSetChanged()
-            }
-            .addOnFailureListener { exception ->
-                Log.e(TAG, "Error getting documents: ", exception)
-            }
-
-
         return view
     }
 
@@ -68,6 +47,27 @@ class HomeTapOneFragment : Fragment() {
         btnWrite.setOnClickListener {
             val intent = Intent(requireContext(), BoardWrite::class.java)
             startActivity(intent)
+        }
+
+        // Firebase에서 데이터 가져오기
+        if (itemList.isEmpty()) {
+            FirebaseFirestore.getInstance().collection("images")
+                .orderBy("timeStamp", Query.Direction.DESCENDING)
+                .get()
+                .addOnSuccessListener { documents ->
+                    for (document in documents) {
+                        val contentDTO = document.toObject(ContentDTO::class.java)
+                        if (contentDTO.title != null && contentDTO.price != null && contentDTO.imageUrl != null) {
+                            val item = Item(contentDTO.title, contentDTO.price, contentDTO.imageUrl!!, contentDTO.contentUid, contentDTO.age, contentDTO.breed, contentDTO.category, contentDTO.content, contentDTO.gender, contentDTO.name, contentDTO.price, contentDTO.spay, contentDTO.vaccine, contentDTO.where)
+                            itemList.add(item)
+                        }
+                    }
+                    // 데이터 변경 감지
+                    boardAdapter.notifyDataSetChanged()
+                }
+                .addOnFailureListener { exception ->
+                    Log.e(TAG, "Error getting documents: ", exception)
+                }
         }
     }
 

@@ -24,13 +24,7 @@ class BoardAdapter(private val itemList: MutableList<Item>) : RecyclerView.Adapt
         val item = itemList[position]
         holder.title.text = item.title
         holder.price.text = item.price
-        // Firebase Storage에서 이미지 가져오기
-        val storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(item.imageUrl)
-        storageReference.downloadUrl.addOnSuccessListener { uri ->
-            Glide.with(holder.itemView.context)
-                .load(uri)
-                .into(holder.image)
-        }
+        holder.loadImage(item.imageUrl)
         holder.itemView.setOnClickListener {
             val fragment = BoardDetailFragment.newInstance(item.contentUid, item.imageUrl)
             val fragmentManager = (holder.itemView.context as AppCompatActivity).supportFragmentManager
@@ -39,9 +33,6 @@ class BoardAdapter(private val itemList: MutableList<Item>) : RecyclerView.Adapt
                 .addToBackStack(null)
                 .commit()
         }
-
-
-
     }
 
     override fun getItemCount(): Int {
@@ -52,5 +43,14 @@ class BoardAdapter(private val itemList: MutableList<Item>) : RecyclerView.Adapt
         var image: ImageView = itemView.findViewById(R.id.main_item_image)
         var title: TextView = itemView.findViewById(R.id.main_item_title)
         var price: TextView = itemView.findViewById(R.id.main_item_price)
+
+        fun loadImage(url: String) {
+            val storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(url)
+            storageReference.downloadUrl.addOnSuccessListener { uri ->
+                Glide.with(itemView.context)
+                    .load(uri)
+                    .into(image)
+            }
+        }
     }
 }
