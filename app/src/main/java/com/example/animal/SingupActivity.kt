@@ -31,13 +31,13 @@ class SingupActivity : AppCompatActivity() {
 
         //회원가입 버튼 클릭 이벤트
         binding.btnSign.setOnClickListener {
-            val name = binding.editSignName.text.toString().trim()
+            val nickname = binding.editSignNickname.text.toString().trim()
             val email = binding.editSignEmail.text.toString().trim()
             val password = binding.editSignPass.text.toString().trim()
             val passchek = binding.editSignPasscheck.text.toString().trim()
 
             if(binding.editSignPass.text.toString().equals( binding.editSignPasscheck.text.toString())){
-                signUp(name,email,password)
+                signUp(nickname,email,password)
             }else{
                 Toast.makeText(this,"비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show()
                 Log.d("Signup","Error")
@@ -45,7 +45,7 @@ class SingupActivity : AppCompatActivity() {
         }
     }
     //회원 가입 코드
-    private fun signUp(name: String, email: String, password: String) {
+    private fun signUp(nickname: String, email: String, password: String) {
 
         fauth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
@@ -55,7 +55,7 @@ class SingupActivity : AppCompatActivity() {
 
                     val intent: Intent = Intent(this@SingupActivity, MainActivity::class.java)
                     startActivity(intent)
-                    addUserToDatabase(name, email, fauth.currentUser?.uid!!)
+                    addUserToDatabase(nickname, email, fauth.currentUser?.uid!!)
                 }else{
                     Toast.makeText(this,"회원 가입 실패", Toast.LENGTH_SHORT).show()
                     Log.d("SignUp","Error : ${task.exception}")
@@ -63,7 +63,7 @@ class SingupActivity : AppCompatActivity() {
             }
     }
 
-    private fun addUserToDatabase(name: String, email: String, uid: String) {
-        DbRef.child("user").child(uid).setValue(User(name,email,uid))
+    private fun addUserToDatabase(nickname: String, email: String, uid: String) {
+        DbRef.child("user").child(uid).setValue(User(nickname,email,uid))
     }
 }

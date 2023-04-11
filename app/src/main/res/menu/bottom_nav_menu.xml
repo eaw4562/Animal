@@ -14,5 +14,17 @@
         app:showAsAction="ifRoom"
         android:icon="@drawable/animal"/>
 
+    <item
+        android:id="@+id/board_detail_chat"
+        android:title="채팅하기"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/board_chat"/>
+
+    <item
+        android:id="@+id/board_detail_favorit"
+        android:title="찜하기"
+        app:showAsAction="ifRoom"
+        android:icon="@drawable/board_favorit"/>
+
 
 </menu>

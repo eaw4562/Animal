@@ -17,6 +17,7 @@ data class ContentDTO(
     //
     var uid : String? = null,
     var userId : String? = null,
+    var usernickname : String? = null,
     var contentUid : String? = null
 
     )

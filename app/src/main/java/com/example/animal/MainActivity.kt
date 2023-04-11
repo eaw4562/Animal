@@ -4,8 +4,11 @@ import android.Manifest
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import androidx.core.app.ActivityCompat
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import com.example.animal.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationBarView
@@ -17,26 +20,45 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     lateinit var binding: ActivityMainBinding
     lateinit var auth: FirebaseAuth
     var firestore: FirebaseFirestore? = null
+    lateinit var drawerLayout : DrawerLayout
 
-    override fun onNavigationItemSelected(parent: MenuItem): Boolean {
-        when (parent.itemId) {
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             R.id.home -> {
-                var homeFragment = HomeTapOneFragment()
+                val homeFragment = HomeTapOneFragment()
                 supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragmentContainerView, homeFragment).commit()
+                    .replace(R.id.fragmentContainerView, homeFragment)
+                    .addToBackStack(null)
+                    .commit()
                 return true
             }
             R.id.home_two -> {
-                var TwoHomeFragment = HomeTapTwoFragment()
+                val twoHomeFragment = HomeTapTwoFragment()
                 supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragmentContainerView, TwoHomeFragment).commit()
+                    .replace(R.id.fragmentContainerView, twoHomeFragment)
+                    .addToBackStack(null)
+                    .commit()
+                return true
+            }
+            R.id.board_detail_chat -> {
+                val chatFragment = ChatFragment()
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainerView, chatFragment)
+                    .addToBackStack(null)
+                    .commit()
+                return true
+            }
+            R.id.board_detail_favorit -> {
+                val favoritFragment = FavoritFragment()
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragmentContainerView, favoritFragment)
+                    .addToBackStack(null)
+                    .commit()
                 return true
             }
         }
         return false
     }
-
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,12 +70,17 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),1)
 
         binding.mainNav.selectedItemId = R.id.home
+
+        //drawerLayout 초기화
+        drawerLayout = binding.drawerLayout
+
+        val myProfile = binding.headerProfile
+        myProfile.setOnClickListener {
+            drawerLayout.openDrawer(GravityCompat.END)
+        }
+
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
 
-       // if (requestCode == )
-    }
 }
 

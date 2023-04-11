@@ -1,20 +1,19 @@
 package com.example.animal
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.ProgressBar
 import com.example.animal.adapter.BoardDetailPagerAdapter
 import com.example.animal.databinding.FragmentBoardDetailBinding
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.model.DocumentKey
 
 
 class BoardDetailFragment : Fragment() {
 
+    private lateinit var mContext: Context
     private lateinit var binding: FragmentBoardDetailBinding
     private var name: String? = ""
     private var imageUrl: List<String>? = null
@@ -29,19 +28,30 @@ class BoardDetailFragment : Fragment() {
     private var price: String? = ""
     var firestore: FirebaseFirestore? = null
 
-    private lateinit var progressBar: ProgressBar
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentBoardDetailBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val bottomNavigation = requireActivity().findViewById<BottomNavigationView>(R.id.main_nav)
+        bottomNavigation.menu.findItem(R.id.board_detail_chat).isVisible = true
+        bottomNavigation.menu.findItem(R.id.board_detail_favorit).isVisible = true
+        bottomNavigation.menu.findItem(R.id.home).isVisible = false
+        bottomNavigation.menu.findItem(R.id.home_two).isVisible = false
+    }
 
 
-        // 프로그래스바 참조
-        progressBar = binding.progressBar
+
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
 
         arguments?.let { bundle ->
             imageUrl = bundle.getString("imageUrl")?.split(",")
@@ -58,12 +68,36 @@ class BoardDetailFragment : Fragment() {
             price = bundle.getString("price")
         }
 
-        // ProgressBar 표시
-        showProgressBar()
-
         bindData()
         getDataBoard()
-        return binding.root
+    }
+
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mContext = context
+
+        val boardDetailNav = activity?.findViewById<BottomNavigationView>(R.id.main_nav)
+        boardDetailNav?.visibility = View.VISIBLE
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+
+        val boardDetailNav = activity?.findViewById<BottomNavigationView>(R.id.main_nav)
+        boardDetailNav?.visibility = View.VISIBLE
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.bottom_nav_menu, menu)
+
+        // main_nav의 항목 숨기기
+        menu.findItem(R.id.home).isVisible = false
+        menu.findItem(R.id.home_two).isVisible = false
+
+        // board_detail_chat과 board_detail_favorit 메뉴 항목 보이기
+        menu.findItem(R.id.board_detail_chat).isVisible = true
+        menu.findItem(R.id.board_detail_favorit).isVisible = true
     }
 
 
@@ -81,9 +115,8 @@ class BoardDetailFragment : Fragment() {
 
         // ViewPager 어댑터 설정
         if (imageUrl != null) {
-            val adapter = BoardDetailPagerAdapter(requireContext(), imageUrl!!)
+            val adapter = BoardDetailPagerAdapter(mContext, imageUrl!!)
             binding.boardDetailImages.adapter = adapter
-
         }
         // ViewPager DotIndicator 추후 수정 예정
         // 현재 적용 x
@@ -122,24 +155,11 @@ class BoardDetailFragment : Fragment() {
                     } else {
                         Log.d("BoardDetailFragment", "No such document")
                     }
-
-                    // ProgressBar 숨기기
-                    hideProgressBar()
                 }
                 ?.addOnFailureListener { exception ->
                     Log.d("BoardDetailFragment", "Error getting documents: ", exception)
-                    // ProgressBar 숨기기
-                    hideProgressBar()
                 }
         }
-    }
-
-    private fun showProgressBar() {
-        binding.progressBar.visibility = View.VISIBLE
-    }
-
-    private fun hideProgressBar() {
-        binding.progressBar.visibility = View.GONE
     }
 
 

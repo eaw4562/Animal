@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/board_favorit"
+        android:icon="@drawable/board_no_favorit"
+        android:enabled="true"
+        android:title="favorite"/>
+
+    <item
+        android:id="@+id/board_chat"
+        android:icon="@drawable/board_chat"
+        android:enabled="true"
+        android:title="Chat"/>
+
+</menu>

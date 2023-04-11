@@ -13,6 +13,7 @@ import com.example.animal.adapter.BoardAdapter
 import com.example.animal.DTO.ContentDTO
 import com.example.animal.DTO.Item
 import com.example.animal.databinding.HomeTapOneFragmentBinding
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 
@@ -42,6 +43,13 @@ class HomeTapOneFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+            val bottomNavigation = requireActivity().findViewById<BottomNavigationView>(R.id.main_nav)
+            bottomNavigation.menu.findItem(R.id.board_detail_chat).isVisible = false
+            bottomNavigation.menu.findItem(R.id.board_detail_favorit).isVisible = false
+            bottomNavigation.menu.findItem(R.id.home).isVisible = true
+            bottomNavigation.menu.findItem(R.id.home_two).isVisible = true
+
 
         val btnWrite = binding.btnWrite
         btnWrite.setOnClickListener {
