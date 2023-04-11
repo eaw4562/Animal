@@ -6,6 +6,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ImageButton
+import android.widget.TextView
+import androidx.appcompat.widget.AppCompatImageButton
 import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -15,12 +18,13 @@ import com.google.android.material.navigation.NavigationBarView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
+import org.w3c.dom.Text
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
     lateinit var binding: ActivityMainBinding
     lateinit var auth: FirebaseAuth
     var firestore: FirebaseFirestore? = null
-    lateinit var drawerLayout : DrawerLayout
+    private lateinit var drawerLayout: DrawerLayout
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
@@ -66,21 +70,31 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        auth = FirebaseAuth.getInstance() // auth 변수 초기화
+        firestore = FirebaseFirestore.getInstance()
         binding.mainNav.setOnItemSelectedListener(this)
         ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),1)
 
         binding.mainNav.selectedItemId = R.id.home
 
-        //drawerLayout 초기화
-        drawerLayout = binding.drawerLayout
+        // drawerLayout 초기화
+        drawerLayout = findViewById(R.id.drawer_layout)
 
-        val myProfile = binding.headerProfile
+        val myProfile = findViewById<ImageButton>(R.id.header_profile)
         myProfile.setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.END)
         }
 
+        val myAccountTextView = binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.my_account)
+        val currentUSer = auth.currentUser
+
+        if(currentUSer != null){
+            val email = currentUSer.email
+            myAccountTextView.text = email
+        }else{
+            myAccountTextView.text ="로그인이 필요합니다."
+        }
     }
-
-
 }
+
 
