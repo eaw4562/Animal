@@ -34,6 +34,10 @@ class BoardDetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentBoardDetailBinding.inflate(inflater, container, false)
+        val bundle = arguments
+        val contentUid = bundle?.getString("contentUid")
+        val uid = bundle?.getString("uid")
+        val title = bundle?.getString("title")
         return binding.root
     }
 
@@ -98,6 +102,7 @@ class BoardDetailFragment : Fragment() {
         // board_detail_chat과 board_detail_favorit 메뉴 항목 보이기
         menu.findItem(R.id.board_detail_chat).isVisible = true
         menu.findItem(R.id.board_detail_favorit).isVisible = true
+
     }
 
 

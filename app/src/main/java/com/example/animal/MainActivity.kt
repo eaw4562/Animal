@@ -1,24 +1,19 @@
 package com.example.animal
 
 import android.Manifest
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
 import android.widget.ImageButton
 import android.widget.TextView
-import androidx.appcompat.widget.AppCompatImageButton
 import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import com.example.animal.DTO.ContentDTO
 import com.example.animal.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.navigation.NavigationBarView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.messaging.FirebaseMessaging
-import org.w3c.dom.Text
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
     lateinit var binding: ActivityMainBinding
@@ -46,6 +41,20 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             }
             R.id.board_detail_chat -> {
                 val chatFragment = ChatFragment()
+                val bundle = Bundle()
+
+                val boardDetailFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView)
+                if(boardDetailFragment is BoardDetailFragment) {
+                    bundle.putString("contentUid", boardDetailFragment.arguments?.getString("contentUid"))
+                    bundle.putString("uid", boardDetailFragment.arguments?.getString("uid"))
+                    bundle.putString("title", boardDetailFragment.arguments?.getString("title"))
+                }else{
+                    bundle.putString("contentUid","default_contentUid")
+                    bundle.putString("uid","default_uid")
+                    bundle.putString("title","default_title")
+                }
+
+                chatFragment.arguments = bundle
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.fragmentContainerView, chatFragment)
                     .addToBackStack(null)

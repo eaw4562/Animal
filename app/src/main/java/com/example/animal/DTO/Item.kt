@@ -14,5 +14,6 @@ data class Item(
     var spay : String?,
     var content : String?,
     var timeStamp: String?,
-    var name : String?
+    var name : String?,
+    var uid : String?
     )
