@@ -1,71 +1,122 @@
 package com.example.animal
 
-import android.content.ContentValues.TAG
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.animal.DTO.ChatDTO
 import com.example.animal.adapter.ChatAdapter
+import com.example.animal.databinding.FragmentChatBinding
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.database.*
 
 class ChatFragment : Fragment() {
 
-    private lateinit var firestore: FirebaseFirestore
-    private lateinit var auth: FirebaseAuth
+    private lateinit var binding: FragmentChatBinding
+    private lateinit var mAuth: FirebaseAuth
+    private lateinit var mDbRef: DatabaseReference
     private lateinit var currentUserId: String
 
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var inputMessage: EditText
-    private lateinit var sendbtn: Button
+    private lateinit var chatList: ArrayList<ChatDTO>
+    private lateinit var chatAdapter: ChatAdapter
+
+    private lateinit var contentUid: String
+    private lateinit var uid: String
+    private lateinit var title: String
+
+    private lateinit var reciverName: String
+    private lateinit var reciverUid: String
+    private lateinit var reciverRoom : String //받는 대화방
+    private lateinit var senderRoom: String //보낸 대화방
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        firestore = FirebaseFirestore.getInstance()
-        auth = FirebaseAuth.getInstance()
-        currentUserId = auth.currentUser?.uid ?: ""
-    }
+        mAuth = FirebaseAuth.getInstance()
+        currentUserId = mAuth.currentUser?.uid ?: ""
+        mDbRef = FirebaseDatabase.getInstance().reference
 
+        // 전달 받은 bundle에서 값을 받아옴
+        arguments?.let {
+            contentUid = it.getString("contentUid").toString()
+            reciverUid = it.getString("uid").toString()
+            title = it.getString("title").toString()
+
+            //접속자 Uid
+            val senderUid = mAuth.currentUser?.uid
+
+            //보낸이 방
+            senderRoom = reciverUid + senderUid
+
+            //받는이 방
+            reciverRoom = senderUid + reciverUid
+        }
+
+
+
+
+        // 전달 받은 bundle에서 값을 받아옴
+        arguments?.let {
+            contentUid = it.getString("contentUid").toString()
+            reciverUid = it.getString("uid").toString()
+            title = it.getString("title").toString()
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_chat, container, false)
+    ): View {
+        binding = FragmentChatBinding.inflate(layoutInflater)
 
-        recyclerView = view.findViewById(R.id.chat_recycler)
-        inputMessage = view.findViewById(R.id.chat_input_edit)
-        sendbtn = view.findViewById(R.id.chat_send_btn)
-    }
+        // 게시글의 타이틀을 출력
+        binding.chatTitleText.text = title
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
 
-        val contentUid = arguments?.getString("contentUid")
+        //RecyclerView
+        chatList = ArrayList()
+        chatAdapter = ChatAdapter(requireContext(), ArrayList())
+        binding.chatRecycler.layoutManager = LinearLayoutManager(requireContext())
+        binding.chatRecycler.adapter = chatAdapter
 
-        //Firestore 채팅 데이터 가져오기
-        val chatCollection = firestore.collection("contents").document(contentUid!!).collection("chat")
-        val query = chatCollection.orderBy("timeStamp")
-        query.addSnapshotListener {value, error ->
-            if(error != null){
-                Log.w(TAG,"Listen falied", error)
-                return@addSnapshotListener
-            }
-            //RecycleView에 적용
-            val chatList = mutableListOf<ChatDTO>()
-            for(document in value!!){
-                val chat = document.toObject(ChatDTO::class.java)
-                chatList.add(chatList)
-            }
-            recyclerView.adapter = ChatAdapter(chatList)
+
+        // 메시지 전송 버튼에 대한 onClick 이벤트 설정
+        binding.chatSendBtn.setOnClickListener {
+            val message = binding.chatInputEdit.text.toString()
+            val messageObject = ChatDTO(currentUserId, message)
+
+            //데이터 저장
+            mDbRef.child("chat").child(senderRoom).child("messages").push()
+                .setValue(messageObject).addOnSuccessListener {
+                    //채팅 저장 성공
+                    mDbRef.child("chats").child(reciverRoom).child("messages").push()
+                        .setValue(messageObject)
+                }
+            //입력값 초기화
+            binding.chatInputEdit.setText("")
         }
+
+        //메시지 가져오기
+        mDbRef.child("chats").child(senderRoom).child("messages")
+            .addValueEventListener(object: ValueEventListener{
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    chatList.clear()
+
+                    for(postSnapshat in snapshot.children){
+
+                        val chat = postSnapshat.getValue(ChatDTO::class.java)
+                        chatList.add(chat!!)
+                    }
+                    //적용
+                    chatAdapter.notifyDataSetChanged()
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                }
+            })
+        return binding.root
     }
 }

@@ -1,22 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ChatFragment">
 
+    <TextView
+        android:id="@+id/chat_title_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="게시글 제목"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:layout_margin="10dp"
+        android:textStyle="bold" />
+
+    <View
+        android:id="@+id/chat_guide"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="5dp"
+        android:layout_below="@id/chat_title_text"
+        android:background="@android:color/darker_gray"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chat_recycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/chat_guide"
+        android:layout_above="@+id/chat_input_layout"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
     <LinearLayout
+        android:id="@+id/chat_input_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
         android:orientation="horizontal"
+        android:layout_alignParentBottom="true"
         android:gravity="center_vertical">
 
         <ImageButton
@@ -32,9 +53,10 @@
         <EditText
             android:id="@+id/chat_input_edit"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:textSize="18sp"
             android:layout_weight="1"
+            android:background="@drawable/edit_backgroud"
             android:hint="텍스트 입력"/>
 
         <androidx.appcompat.widget.AppCompatButton
@@ -46,4 +68,4 @@
             android:layout_marginLeft="10dp"
             android:text="전송" />
     </LinearLayout>
-</FrameLayout>
+</RelativeLayout>

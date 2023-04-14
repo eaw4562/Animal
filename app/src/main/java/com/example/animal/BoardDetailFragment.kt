@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
-import com.example.animal.adapter.BoardDetailPagerAdapter
+import com.example.animal.adapter.BoardDetailAdapter
 import com.example.animal.databinding.FragmentBoardDetailBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.firestore.FirebaseFirestore
@@ -26,6 +26,7 @@ class BoardDetailFragment : Fragment() {
     private var spay: String? = ""
     private var content: String? = ""
     private var price: String? = ""
+    private var title: String? = ""
     var firestore: FirebaseFirestore? = null
 
 
@@ -70,6 +71,7 @@ class BoardDetailFragment : Fragment() {
             spay = if (spay == "O") "중성화 O" else "중성화 X"
             content = bundle.getString("content")
             price = bundle.getString("price")
+            title = bundle.getString("title")
         }
 
         bindData()
@@ -120,7 +122,7 @@ class BoardDetailFragment : Fragment() {
 
         // ViewPager 어댑터 설정
         if (imageUrl != null) {
-            val adapter = BoardDetailPagerAdapter(mContext, imageUrl!!)
+            val adapter = BoardDetailAdapter(mContext, imageUrl!!)
             binding.boardDetailImages.adapter = adapter
         }
         // ViewPager DotIndicator 추후 수정 예정
@@ -144,6 +146,7 @@ class BoardDetailFragment : Fragment() {
                 ?.get()
                 ?.addOnSuccessListener { document ->
                     if (document.exists()) {
+                        title = document.getString("title")
                         name = document.getString("name")
                         price = document.getString("price")
                         imageUrl = document.getString("imageUrl")?.split(",")

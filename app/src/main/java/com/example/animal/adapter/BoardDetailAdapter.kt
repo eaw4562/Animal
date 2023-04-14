@@ -10,8 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
 
-class BoardDetailPagerAdapter(private val context: Context, private val imageUrls: List<String>) :
-    RecyclerView.Adapter<BoardDetailPagerAdapter.ViewHolder>() {
+class BoardDetailAdapter(private val context: Context, private val imageUrls: List<String>) :
+    RecyclerView.Adapter<BoardDetailAdapter.ViewHolder>() {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val imageView: ImageView = itemView.findViewById(com.example.animal.R.id.board_detail_image)

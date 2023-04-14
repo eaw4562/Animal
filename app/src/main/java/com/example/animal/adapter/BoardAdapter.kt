@@ -32,6 +32,7 @@ class BoardAdapter(private val itemList: MutableList<Item>) : RecyclerView.Adapt
             val bundle = Bundle()
             bundle.putString("contentUid", item.contentUid)
             bundle.putString("uid",item.uid)
+            bundle.putString("title", item.title)
             fragment.arguments = bundle
             val fragmentManager = (holder.itemView.context as AppCompatActivity).supportFragmentManager
             fragmentManager.beginTransaction()
