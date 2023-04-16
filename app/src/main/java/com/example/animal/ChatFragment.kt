@@ -1,6 +1,7 @@
 package com.example.animal
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -19,8 +20,7 @@ class ChatFragment : Fragment() {
     private lateinit var mDbRef: DatabaseReference
     private lateinit var currentUserId: String
 
-    private lateinit var chatList: ArrayList<ChatDTO>
-    private lateinit var chatAdapter: ChatAdapter
+    private lateinit var messageList: ArrayList<ChatDTO>
 
     private lateinit var contentUid: String
     private lateinit var uid: String
@@ -28,8 +28,8 @@ class ChatFragment : Fragment() {
 
     private lateinit var reciverName: String
     private lateinit var reciverUid: String
-    private lateinit var reciverRoom : String //받는 대화방
-    private lateinit var senderRoom: String //보낸 대화방
+    private lateinit var senderRoom: String //받는 대화방
+    private lateinit var reciverRoom: String //보낸 대화방
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,21 +48,13 @@ class ChatFragment : Fragment() {
             //접속자 Uid
             val senderUid = mAuth.currentUser?.uid
 
+
             //보낸이 방
-            senderRoom = reciverUid + senderUid
+            reciverRoom = reciverUid + senderUid
 
             //받는이 방
-            reciverRoom = senderUid + reciverUid
-        }
+            senderRoom = senderUid + reciverUid
 
-
-
-
-        // 전달 받은 bundle에서 값을 받아옴
-        arguments?.let {
-            contentUid = it.getString("contentUid").toString()
-            reciverUid = it.getString("uid").toString()
-            title = it.getString("title").toString()
         }
     }
 
@@ -77,8 +69,8 @@ class ChatFragment : Fragment() {
 
 
         //RecyclerView
-        chatList = ArrayList()
-        chatAdapter = ChatAdapter(requireContext(), ArrayList())
+        messageList = ArrayList()
+        val chatAdapter: ChatAdapter = ChatAdapter(requireContext(), messageList)
         binding.chatRecycler.layoutManager = LinearLayoutManager(requireContext())
         binding.chatRecycler.adapter = chatAdapter
 
@@ -97,19 +89,22 @@ class ChatFragment : Fragment() {
                 }
             //입력값 초기화
             binding.chatInputEdit.setText("")
+            chatAdapter.notifyDataSetChanged()
         }
 
         //메시지 가져오기
-        mDbRef.child("chats").child(senderRoom).child("messages")
+        mDbRef.child("chats").child(reciverRoom).child("messages")
             .addValueEventListener(object: ValueEventListener{
                 override fun onDataChange(snapshot: DataSnapshot) {
-                    chatList.clear()
+                    messageList.clear()
 
                     for(postSnapshat in snapshot.children){
 
-                        val chat = postSnapshat.getValue(ChatDTO::class.java)
-                        chatList.add(chat!!)
+                        val message = postSnapshat.getValue(ChatDTO::class.java)
+                        messageList.add(message!!)
                     }
+                    Log.w("ChatFragment", "chatList size: ${messageList.size}") // 새로 추가한 로그
+
                     //적용
                     chatAdapter.notifyDataSetChanged()
                 }
