@@ -9,6 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.animal.DTO.ChatDTO
 import com.example.animal.R
 import com.google.firebase.auth.FirebaseAuth
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.collections.ArrayList
 
 class ChatAdapter(private val context: Context, private val messageList: ArrayList<ChatDTO>):
@@ -29,19 +31,23 @@ class ChatAdapter(private val context: Context, private val messageList: ArrayLi
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-
         val currentMessage = messageList[position]
-
-        if(holder.javaClass == SendViewHolder::class.java){
+        if (holder.javaClass == SendViewHolder::class.java) {
             val viewHolder = holder as SendViewHolder
             viewHolder.sendMessage.text = currentMessage.message
-            viewHolder.timeTextView.text = currentMessage.timestamp?.toString() ?: ""
-        }else{
+            val date = Date(currentMessage.timestamp!!)
+            val formattedTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(date)
+            viewHolder.timeTextView.text = formattedTime
+        } else {
             val viewHolder = holder as ReceiveViewHolder
             viewHolder.receiveMessage.text = currentMessage.message
-            viewHolder.timeTextView.text = currentMessage.timestamp?.toString() ?: ""
+            val date = Date(currentMessage.timestamp!!)
+            val formattedTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(date)
+            viewHolder.timeTextView.text = formattedTime
         }
     }
+
+
 
     override fun getItemCount(): Int {
         return messageList.size
@@ -60,11 +66,11 @@ class ChatAdapter(private val context: Context, private val messageList: ArrayLi
 
     class SendViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
         val sendMessage: TextView = itemView.findViewById(R.id.send_message_text)
-        val timeTextView : TextView = itemView.findViewById(R.id.timestamp_text)
+        val timeTextView : TextView = itemView.findViewById(R.id.send_timestamp_text)
     }
 
     class ReceiveViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
         val receiveMessage: TextView = itemView.findViewById(R.id.receive_message_text)
-        val timeTextView : TextView = itemView.findViewById(R.id.timestamp_text)
+        val timeTextView : TextView = itemView.findViewById(R.id.send_timestamp_text)
     }
 }

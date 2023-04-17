@@ -87,9 +87,10 @@ class ChatFragment : Fragment() {
         binding.chatSendBtn.setOnClickListener {
             val message = binding.chatInputEdit.text.toString()
             val currentTime = System.currentTimeMillis()
-            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA)
+            sdf.timeZone = TimeZone.getTimeZone("Asia/Seoul")
             val dateString = sdf.format(currentTime)
-            val messageObject = ChatDTO(currentUserId, message, dateString)
+            val messageObject = ChatDTO(currentUserId, message, dateString, currentTime)
 
             //데이터 저장
             mDbRef.child("chat").child(senderRoom).child("messages").push()

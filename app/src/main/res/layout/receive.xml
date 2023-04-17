@@ -8,10 +8,23 @@
         android:id="@+id/receive_message_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
+        android:layout_alignParentStart="false"
         android:layout_margin="5dp"
         android:background="@drawable/edit_backgroud"
         android:padding="10dp"
         android:text="받은 메시지"
         android:textSize="18sp"/>
+
+    <TextView
+        android:id="@+id/recieve_timestamp_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textColor="#888888"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignBottom="@id/receive_message_text" />
+
+
 </RelativeLayout>

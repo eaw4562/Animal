@@ -127,4 +127,3 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     }
 }
 
-
