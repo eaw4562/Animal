@@ -35,9 +35,11 @@ class ChatAdapter(private val context: Context, private val messageList: ArrayLi
         if(holder.javaClass == SendViewHolder::class.java){
             val viewHolder = holder as SendViewHolder
             viewHolder.sendMessage.text = currentMessage.message
+            viewHolder.timeTextView.text = currentMessage.timestamp?.toString() ?: ""
         }else{
             val viewHolder = holder as ReceiveViewHolder
             viewHolder.receiveMessage.text = currentMessage.message
+            viewHolder.timeTextView.text = currentMessage.timestamp?.toString() ?: ""
         }
     }
 
@@ -58,9 +60,11 @@ class ChatAdapter(private val context: Context, private val messageList: ArrayLi
 
     class SendViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
         val sendMessage: TextView = itemView.findViewById(R.id.send_message_text)
+        val timeTextView : TextView = itemView.findViewById(R.id.timestamp_text)
     }
 
     class ReceiveViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
         val receiveMessage: TextView = itemView.findViewById(R.id.receive_message_text)
+        val timeTextView : TextView = itemView.findViewById(R.id.timestamp_text)
     }
 }

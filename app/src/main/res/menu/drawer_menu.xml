@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/my_chat_list"
+        android:icon="@drawable/chat"
+        android:enabled="true"
+        android:title="나의 채팅 목록"
+        android:paddingTop="16dp" />
+
+    <item
+        android:id="@+id/my_favorit_list"
+        android:icon="@drawable/chat"
+        android:enabled="true"
+        android:title="나의 찜한 목록"
+        android:paddingTop="16dp" />
+
+    <item
+        android:id="@+id/my_account_logout"
+        android:icon="@drawable/my_logout"
+        android:enabled="true"
+        android:title="로그아웃"
+        android:paddingTop="16dp"/>
+</menu>

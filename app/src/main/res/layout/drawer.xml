@@ -55,8 +55,9 @@
                 android:layout_height="1dp"
                 android:layout_marginTop="10dp"
                 android:background="#514D4D" />
-
+<!--
             <LinearLayout
+                android:id="@+id/chat_list_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
@@ -79,6 +80,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/favorite_list_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
@@ -127,7 +129,7 @@
                     android:layout_marginLeft="10dp"
                     android:textSize="24sp"/>
             </LinearLayout>
-
+-->
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

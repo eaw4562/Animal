@@ -4,8 +4,8 @@ data class ChatDTO(
     var uid: String? = null,
     var message: String? = null,
     var sendId: String? = null,
-   // var timeStamp: String? = null,
+    var timestamp: Long? = null,
     var receiveId:String? = null
 ) {
-    constructor() : this("", "", "", "")
+    constructor() : this("", "", "", 0)
 }

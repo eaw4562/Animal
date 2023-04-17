@@ -9,9 +9,9 @@ import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import com.example.animal.DTO.ContentDTO
 import com.example.animal.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -20,6 +20,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     lateinit var auth: FirebaseAuth
     var firestore: FirebaseFirestore? = null
     private lateinit var drawerLayout: DrawerLayout
+    private lateinit var navigationView: NavigationView
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
@@ -89,10 +90,30 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         // drawerLayout 초기화
         drawerLayout = findViewById(R.id.drawer_layout)
 
+        navigationView = findViewById(R.id.navigation_view)
+
+        navigationView.setNavigationItemSelectedListener { menuItem ->
+            when(menuItem.itemId){
+                R.id.my_chat_list -> {
+                    val myChatList = MyChatRoomFragment()
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainerView, myChatList)
+                        .addToBackStack(null)
+                        .commit()
+                    drawerLayout.closeDrawer(GravityCompat.END)
+                    return@setNavigationItemSelectedListener true // 여기서 반환 타입을 true로 지정
+                }
+            }
+            return@setNavigationItemSelectedListener false // 여기서 반환 타입을 false로 지정
+        }
+
+
         val myProfile = findViewById<ImageButton>(R.id.header_profile)
         myProfile.setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.END)
         }
+
+
 
         val myAccountTextView = binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.my_account)
         val currentUSer = auth.currentUser

@@ -12,6 +12,11 @@ import com.example.animal.adapter.ChatAdapter
 import com.example.animal.databinding.FragmentChatBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.util.*
+import kotlin.collections.ArrayList
 
 class ChatFragment : Fragment() {
 
@@ -19,6 +24,7 @@ class ChatFragment : Fragment() {
     private lateinit var mAuth: FirebaseAuth
     private lateinit var mDbRef: DatabaseReference
     private lateinit var currentUserId: String
+    private lateinit var currentUserEmail : String
 
     private lateinit var messageList: ArrayList<ChatDTO>
 
@@ -30,6 +36,7 @@ class ChatFragment : Fragment() {
     private lateinit var reciverUid: String
     private lateinit var senderRoom: String //받는 대화방
     private lateinit var reciverRoom: String //보낸 대화방
+    private lateinit var timestamp : String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,6 +44,7 @@ class ChatFragment : Fragment() {
 
         mAuth = FirebaseAuth.getInstance()
         currentUserId = mAuth.currentUser?.uid ?: ""
+        currentUserEmail = mAuth.currentUser?.email ?: ""
         mDbRef = FirebaseDatabase.getInstance().reference
 
         // 전달 받은 bundle에서 값을 받아옴
@@ -50,10 +58,10 @@ class ChatFragment : Fragment() {
 
 
             //보낸이 방
-            reciverRoom = reciverUid + senderUid
+            reciverRoom = reciverUid + "_" + senderUid
 
             //받는이 방
-            senderRoom = senderUid + reciverUid
+            senderRoom = senderUid + "_" + reciverUid
 
         }
     }
@@ -78,7 +86,10 @@ class ChatFragment : Fragment() {
         // 메시지 전송 버튼에 대한 onClick 이벤트 설정
         binding.chatSendBtn.setOnClickListener {
             val message = binding.chatInputEdit.text.toString()
-            val messageObject = ChatDTO(currentUserId, message)
+            val currentTime = System.currentTimeMillis()
+            val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+            val dateString = sdf.format(currentTime)
+            val messageObject = ChatDTO(currentUserId, message, dateString)
 
             //데이터 저장
             mDbRef.child("chat").child(senderRoom).child("messages").push()
@@ -114,4 +125,6 @@ class ChatFragment : Fragment() {
             })
         return binding.root
     }
+
+
 }
