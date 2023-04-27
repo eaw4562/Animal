@@ -37,6 +37,7 @@ class ChatFragment : Fragment() {
     private lateinit var senderRoom: String //받는 대화방
     private lateinit var reciverRoom: String //보낸 대화방
     private lateinit var timestamp : String
+    lateinit var chatRoom : String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,11 +58,11 @@ class ChatFragment : Fragment() {
             val senderUid = mAuth.currentUser?.uid
 
 
-            //보낸이 방
-            reciverRoom = reciverUid + "_" + senderUid
+            //채팅 방
+            chatRoom = senderUid + "_" + reciverUid
 
-            //받는이 방
-            senderRoom = senderUid + "_" + reciverUid
+            //받는이 방senderUid
+            //senderRoom = senderUid + "_" + reciverUid
 
         }
     }
@@ -90,22 +91,22 @@ class ChatFragment : Fragment() {
             val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA)
             sdf.timeZone = TimeZone.getTimeZone("Asia/Seoul")
             val dateString = sdf.format(currentTime)
-            val messageObject = ChatDTO(currentUserId, message, dateString, currentTime)
+            val messageObject = ChatDTO(currentUserId, message, reciverUid, currentTime, dateString)
 
-            //데이터 저장
-            mDbRef.child("chat").child(senderRoom).child("messages").push()
-                .setValue(messageObject).addOnSuccessListener {
-                    //채팅 저장 성공
-                    mDbRef.child("chats").child(reciverRoom).child("messages").push()
-                        .setValue(messageObject)
-                }
+            // 데이터 저장
+            val senderChatRef = mDbRef.child("Chat").child(chatRoom).child("messages").push()
+
+            // 데이터 저장
+            senderChatRef.setValue(messageObject).addOnSuccessListener {
+                // 채팅 저장 성공
+            }
             //입력값 초기화
             binding.chatInputEdit.setText("")
             chatAdapter.notifyDataSetChanged()
         }
 
         //메시지 가져오기
-        mDbRef.child("chats").child(reciverRoom).child("messages")
+        mDbRef.child("Chat").child(chatRoom).child("messages")
             .addValueEventListener(object: ValueEventListener{
                 override fun onDataChange(snapshot: DataSnapshot) {
                     messageList.clear()

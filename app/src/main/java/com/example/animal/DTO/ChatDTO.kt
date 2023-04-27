@@ -5,7 +5,7 @@ data class ChatDTO(
     var message: String? = null,
     var sendId: String? = null,
     var timestamp: Long? = null,
-    var receiveId:String? = null
+    var dateString : String? = null
 ) {
-    constructor() : this("", "", "", 0)
+    constructor() : this("", "", "", 0, "")
 }

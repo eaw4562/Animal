@@ -13,7 +13,7 @@ import com.example.animal.databinding.FragmentMyChatBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 
-class MyChatRoomFragment : Fragment() {
+class ChatRoomFragment : Fragment() {
 
     private lateinit var mAuth: FirebaseAuth
     private lateinit var mDbRef: DatabaseReference
@@ -44,25 +44,28 @@ class MyChatRoomFragment : Fragment() {
         binding.chatRecycler.adapter = chatRoomAdapter
 
         // 채팅방 목록 가져오기
-        mDbRef.child("chats")
-            .addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    chatRooms.clear()
+        val currentUserId = mAuth.currentUser?.uid
 
-                    for (postSnapshat in snapshot.children) {
-                        val chatRoom = postSnapshat.getValue(ChatRoomDTO::class.java)
-                        if (chatRoom?.senderUid == currentUserId || chatRoom?.receiverUid == currentUserId) {
-                            chatRooms.add(chatRoom)
-                        }
-                    }
-                    Log.w("MyChatRoomFragment", "chatRooms size: ${chatRooms.size}") // 새로 추가한 로그
+        val chatRoomsRef = mDbRef.child("Chat")
+            .orderByChild("chatRoom")
+            .startAt("$currentUserId")
+            .endAt("$currentUserId" + "\uf8ff")
 
-                    // 채팅방 목록 업데이트
-                    chatRoomAdapter.notifyDataSetChanged()
+        chatRoomsRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (dataSnapshot in snapshot.children) {
+                    val chatRoom = dataSnapshot.key // chatRoom을 가져옴
+                    val chatRoomDTO = ChatRoomDTO(chatRoom) // ChatRoomDTO 생성
+                    // 가져온 chatRoom을 처리하는 작업 수행
+                    chatRooms.add(chatRoomDTO)
                 }
+            }
 
-                override fun onCancelled(error: DatabaseError) {}
-            })
+            override fun onCancelled(error: DatabaseError) {
+                // 쿼리 수행 실패 시 호출되는 콜백 메서드
+            }
+        })
+
 
         return binding.root
     }

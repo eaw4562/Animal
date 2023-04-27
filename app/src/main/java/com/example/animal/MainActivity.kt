@@ -95,7 +95,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         navigationView.setNavigationItemSelectedListener { menuItem ->
             when(menuItem.itemId){
                 R.id.my_chat_list -> {
-                    val myChatList = MyChatRoomFragment()
+                    val myChatList = ChatRoomFragment()
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.fragmentContainerView, myChatList)
                         .addToBackStack(null)
