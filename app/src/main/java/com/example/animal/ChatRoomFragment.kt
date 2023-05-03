@@ -28,6 +28,7 @@ class ChatRoomFragment : Fragment() {
         currentUserId = mAuth.currentUser?.uid ?: ""
         currentUserEmail = mAuth.currentUser?.email ?: ""
         mDbRef = FirebaseDatabase.getInstance().reference
+
     }
 
     override fun onCreateView(
@@ -37,19 +38,23 @@ class ChatRoomFragment : Fragment() {
     ): View {
         binding = FragmentMyChatBinding.inflate(inflater, container, false)
 
+
+
         //RecyclerView
         val chatRooms: MutableList<ChatRoomDTO> = ArrayList()
         val chatRoomAdapter = ChatRoomAdapter(requireContext(), chatRooms, currentUserEmail)
+        //val chatRoom = currentUserId + "_" + uid
         binding.chatRecycler.layoutManager = LinearLayoutManager(requireContext())
         binding.chatRecycler.adapter = chatRoomAdapter
+
+
 
         // 채팅방 목록 가져오기
         val currentUserId = mAuth.currentUser?.uid
 
         val chatRoomsRef = mDbRef.child("Chat")
-            .orderByChild("chatRoom")
-            .startAt("$currentUserId")
-            .endAt("$currentUserId" + "\uf8ff")
+            .orderByChild("users")
+            .equalTo(currentUserId)
 
         chatRoomsRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -58,6 +63,7 @@ class ChatRoomFragment : Fragment() {
                     val chatRoomDTO = ChatRoomDTO(chatRoom) // ChatRoomDTO 생성
                     // 가져온 chatRoom을 처리하는 작업 수행
                     chatRooms.add(chatRoomDTO)
+                    Log.d("채팅방 갯수","chatRooms")
                 }
             }
 

@@ -73,7 +73,6 @@ class BoardDetailFragment : Fragment() {
             price = bundle.getString("price")
             title = bundle.getString("title")
         }
-
         bindData()
         getDataBoard()
     }
@@ -178,7 +177,6 @@ class BoardDetailFragment : Fragment() {
             val args = Bundle().apply {
                 putString("contentUid", contentUid)
                 putString("imageUrl", imageUrl)
-
             }
             fragment.arguments = args
             return fragment
