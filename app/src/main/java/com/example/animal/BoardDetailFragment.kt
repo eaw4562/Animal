@@ -1,13 +1,18 @@
 package com.example.animal
 
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
+import com.example.animal.DTO.User
 import com.example.animal.adapter.BoardDetailAdapter
 import com.example.animal.databinding.FragmentBoardDetailBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
+import com.google.firebase.database.ktx.getValue
 import com.google.firebase.firestore.FirebaseFirestore
 
 
@@ -28,6 +33,8 @@ class BoardDetailFragment : Fragment() {
     private var price: String? = ""
     private var title: String? = ""
     var firestore: FirebaseFirestore? = null
+    private lateinit var mAuth : FirebaseAuth
+    private lateinit var mDbRef : DatabaseReference
 
 
     override fun onCreateView(
@@ -39,6 +46,24 @@ class BoardDetailFragment : Fragment() {
         val contentUid = bundle?.getString("contentUid")
         val uid = bundle?.getString("uid")
         val title = bundle?.getString("title")
+
+        mAuth = FirebaseAuth.getInstance()
+        mDbRef = FirebaseDatabase.getInstance().reference
+
+        mDbRef.child("user").child(uid!!)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if(snapshot.exists()) {
+                        val author = snapshot.getValue<User>()
+                        binding.boardDetailNickname.text = author?.nickname
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    Log.e(TAG, "유저 데이터 오류", error.toException())
+                }
+            })
+
         return binding.root
     }
 

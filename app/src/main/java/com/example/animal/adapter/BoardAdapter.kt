@@ -42,6 +42,7 @@ class BoardAdapter(private val itemList: MutableList<Item>) : RecyclerView.Adapt
         }
     }
 
+
     override fun getItemCount(): Int {
         return itemList.size
     }

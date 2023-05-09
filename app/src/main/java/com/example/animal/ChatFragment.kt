@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.animal.DTO.ChatDTO
-import com.example.animal.DTO.User
 import com.example.animal.adapter.ChatAdapter
 import com.example.animal.databinding.FragmentChatBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -95,13 +94,14 @@ class ChatFragment : Fragment() {
             val messageObject = ChatDTO(currentUserId, message, reciverUid, currentTime, dateString)
 
             // 데이터 저장
-            val senderChatRef = mDbRef.child("Chat").child("chatRooms").push()
+            val senderChatRef = mDbRef.child("Chat").child("chatRooms").child(chatRoom).child("messages").push()
 
             // 데이터 저장
             senderChatRef.setValue(messageObject).addOnSuccessListener {
+                mDbRef.child("Chat").child("chatRooms").child(chatRoom).child("users").child(currentUserId).setValue(true)
+                mDbRef.child("Chat").child("chatRooms").child(chatRoom).child("users").child(reciverUid).setValue(true)
+
                 // 채팅 저장 성공
-                mDbRef.child("Chat").child("users").child(currentUserId).setValue(currentUserId)
-                mDbRef.child("Chat").child("users").child(reciverUid).setValue(reciverUid)
             }
             //입력값 초기화
             binding.chatInputEdit.setText("")
@@ -109,7 +109,7 @@ class ChatFragment : Fragment() {
         }
 
         //메시지 가져오기
-        mDbRef.child("Chat").child("chatRooms")
+        mDbRef.child("Chat").child("chatRooms").child(chatRoom).child("messages")
             .addValueEventListener(object: ValueEventListener{
                 override fun onDataChange(snapshot: DataSnapshot) {
                     messageList.clear()

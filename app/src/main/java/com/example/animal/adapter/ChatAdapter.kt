@@ -36,8 +36,11 @@ class ChatAdapter(private val context: Context, private val messageList: ArrayLi
             val viewHolder = holder as SendViewHolder
             viewHolder.sendMessage.text = currentMessage.message
             val date = Date(currentMessage.timestamp!!)
-            val formattedTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(date)
+            val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+            dateFormat.timeZone = TimeZone.getTimeZone("Asia/Seoul")
+            val formattedTime = dateFormat.format(date)
             viewHolder.timeTextView.text = formattedTime
+
         } else {
             val viewHolder = holder as ReceiveViewHolder
             viewHolder.receiveMessage.text = currentMessage.message
