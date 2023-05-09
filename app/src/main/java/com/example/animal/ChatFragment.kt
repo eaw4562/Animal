@@ -59,7 +59,7 @@ class ChatFragment : Fragment() {
 
 
             //채팅 방
-            chatRoom = senderUid + "_" + reciverUid
+            chatRoom = listOf(senderUid, reciverUid).sortedBy { it }.joinToString(separator = "_")
 
             //받는이 방senderUid
             //senderRoom = senderUid + "_" + reciverUid

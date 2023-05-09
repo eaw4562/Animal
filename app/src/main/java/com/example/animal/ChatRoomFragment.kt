@@ -57,8 +57,8 @@ class ChatRoomFragment : Fragment() {
                     for (dataSnapshot in snapshot.children) {
                         val chatRoom = dataSnapshot.key // 채팅방을 가져옴
                         val chatRoomDTO = ChatRoomDTO(chatRoom) // ChatRoomDTO 생성
-                        chatRoomDTO.senderUid = chatRoom?.split("_")?.get(0)
-                        chatRoomDTO.reciverUid = chatRoom?.split("_")?.get(1)
+                        chatRoomDTO.senderUid = chatRoom?.split("_")?.getOrNull(0)
+                        chatRoomDTO.reciverUid = chatRoom?.split("_")?.getOrNull(1)
                         // 마지막 메시지 가져오기
                         val lastMessageRef = mDbRef.child("Chat").child("chatRooms").child(chatRoom!!).child("messages")
                             .limitToLast(1)

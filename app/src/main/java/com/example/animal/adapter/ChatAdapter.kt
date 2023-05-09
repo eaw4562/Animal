@@ -17,7 +17,7 @@ class ChatAdapter(private val context: Context, private val messageList: ArrayLi
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val send = 1  //보내는 타입
-    private val recive = 2 //받는 타입
+    private val receive = 2 //받는 타입
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
@@ -63,7 +63,7 @@ class ChatAdapter(private val context: Context, private val messageList: ArrayLi
         return if(FirebaseAuth.getInstance().currentUser?.uid.equals(currentMessage.sendId)){
             send
         }else{
-            recive
+            receive
         }
     }
 
@@ -74,6 +74,6 @@ class ChatAdapter(private val context: Context, private val messageList: ArrayLi
 
     class ReceiveViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
         val receiveMessage: TextView = itemView.findViewById(R.id.receive_message_text)
-        val timeTextView : TextView = itemView.findViewById(R.id.send_timestamp_text)
+        val timeTextView : TextView = itemView.findViewById(R.id.recieve_timestamp_text)
     }
 }
