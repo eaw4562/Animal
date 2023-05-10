@@ -56,7 +56,7 @@ class ChatFragment : Fragment() {
 
             var senderUid = it.getString("senderUid")
             if (senderUid == null) {
-                senderUid = mAuth.currentUser?.uid
+                senderUid = reciverUid
             }
 
 
@@ -105,7 +105,7 @@ class ChatFragment : Fragment() {
 
                 // 채팅 저장 성공
                 mDbRef.child("Chat").child("chatRooms").child(chatRoom).child("messages").child(senderChatRef.key!!)
-                    .child("isRead").setValue(false)
+                    .child("isRead").setValue(true)
             }
             //입력값 초기화
             binding.chatInputEdit.setText("")
@@ -119,21 +119,19 @@ class ChatFragment : Fragment() {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     messageList.clear()
 
-                    for(postSnapshat in snapshot.children){
-
-                        val message = postSnapshat.getValue(ChatDTO::class.java)
+                    for (postSnapshot in snapshot.children) {
+                        val message = postSnapshot.getValue(ChatDTO::class.java)
                         if (message != null) {
-                            if(message.isRead == true && message.sendId != currentUserId){
-                                postSnapshat.ref.child("isRead").setValue(true)
+                            if (message.sendId == reciverUid && message.isRead == false) {
+                                postSnapshot.ref.child("isShown").setValue(true)
+                            } else if (message.sendId == currentUserId && message.isRead == false) {
+                                postSnapshot.ref.child("isShown").setValue(false)
                             }
                         }
                         messageList.add(message!!)
                     }
-                    Log.w("ChatFragment", "chatList size: ${messageList.size}") // 새로 추가한 로그
-
-                    //적용
                     chatAdapter.notifyDataSetChanged()
-                    binding.chatRecycler.scrollToPosition(messageList.size -1)
+                    binding.chatRecycler.scrollToPosition(messageList.size - 1)
                 }
 
                 override fun onCancelled(error: DatabaseError) {
