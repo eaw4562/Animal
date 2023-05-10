@@ -40,15 +40,17 @@ class ChatAdapter(private val context: Context, private val messageList: ArrayLi
             dateFormat.timeZone = TimeZone.getTimeZone("Asia/Seoul")
             val formattedTime = dateFormat.format(date)
             viewHolder.timeTextView.text = formattedTime
-
+            viewHolder.isRead.visibility = View.GONE // 보낸 메시지의 isRead는 무조건 true이므로 표시하지 않음
         } else {
             val viewHolder = holder as ReceiveViewHolder
             viewHolder.receiveMessage.text = currentMessage.message
             val date = Date(currentMessage.timestamp!!)
             val formattedTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(date)
             viewHolder.timeTextView.text = formattedTime
+            viewHolder.isRead.visibility = if (currentMessage.isRead!!) View.VISIBLE else View.GONE // isRead 값에 따라 표시 여부 결정
         }
     }
+
 
 
 
@@ -70,10 +72,12 @@ class ChatAdapter(private val context: Context, private val messageList: ArrayLi
     class SendViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
         val sendMessage: TextView = itemView.findViewById(R.id.txt_message)
         val timeTextView : TextView = itemView.findViewById(R.id.txt_date)
+        val isRead : TextView = itemView.findViewById(R.id.txt_isShown)
     }
 
     class ReceiveViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
         val receiveMessage: TextView = itemView.findViewById(R.id.txt_message)
         val timeTextView : TextView = itemView.findViewById(R.id.txt_date)
+        val isRead : TextView = itemView.findViewById(R.id.txt_isShown)
     }
 }

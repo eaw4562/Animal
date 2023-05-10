@@ -5,7 +5,11 @@ data class ChatDTO(
     var message: String? = null,
     var sendId: String? = null,
     var timestamp: Long? = null,
-    var dateString : String? = null
+    var dateString : String? = null,
+    var isRead : Boolean? = false
 ) {
-    constructor() : this("", "", "", 0, "")
+    fun getIsRead() : Boolean {
+        return isRead!!
+    }
+    constructor() : this("", "", "", 0, "", false)
 }

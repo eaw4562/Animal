@@ -104,10 +104,13 @@ class ChatFragment : Fragment() {
                 mDbRef.child("Chat").child("chatRooms").child(chatRoom).child("users").child(reciverUid).setValue(true)
 
                 // 채팅 저장 성공
+                mDbRef.child("Chat").child("chatRooms").child(chatRoom).child("messages").child(senderChatRef.key!!)
+                    .child("isRead").setValue(false)
             }
             //입력값 초기화
             binding.chatInputEdit.setText("")
             chatAdapter.notifyDataSetChanged()
+            binding.chatRecycler.scrollToPosition(messageList.size -1)
         }
 
         //메시지 가져오기
@@ -119,12 +122,18 @@ class ChatFragment : Fragment() {
                     for(postSnapshat in snapshot.children){
 
                         val message = postSnapshat.getValue(ChatDTO::class.java)
+                        if (message != null) {
+                            if(message.isRead == true && message.sendId != currentUserId){
+                                postSnapshat.ref.child("isRead").setValue(true)
+                            }
+                        }
                         messageList.add(message!!)
                     }
                     Log.w("ChatFragment", "chatList size: ${messageList.size}") // 새로 추가한 로그
 
                     //적용
                     chatAdapter.notifyDataSetChanged()
+                    binding.chatRecycler.scrollToPosition(messageList.size -1)
                 }
 
                 override fun onCancelled(error: DatabaseError) {
