@@ -27,11 +27,14 @@ class ChatRoomAdapter(
 
     override fun onBindViewHolder(holder: ChatRoomViewHolder, position: Int) {
         val chatRoom = chatRooms[position]
-        val otherUserUid = if (chatRoom.senderUid == currentUserUid) {
+        /*val otherUserUid = if (chatRoom.senderUid == currentUserUid) {
             chatRoom.senderUid
         } else {
             chatRoom.reciverUid
-        }
+        }*/
+
+        val otherUserUid = chatRoom.senderUid
+        val meUserUid = chatRoom.reciverUid
         val otherUserEmail = chatRoom.receiverEmail // 수정된 부분
         holder.chatRoomNameTextView.text = otherUserEmail
         holder.lastMessageTextView.text = chatRoom.lastMessage
@@ -44,6 +47,7 @@ class ChatRoomAdapter(
             val bundle = Bundle()
             bundle.putString("uid", otherUserUid)
             bundle.putString("title", otherUserEmail)
+            bundle.putString("senderUid",meUserUid)
             val chatFragment = ChatFragment()
             chatFragment.arguments = bundle
             val transaction = (context as MainActivity).supportFragmentManager.beginTransaction()

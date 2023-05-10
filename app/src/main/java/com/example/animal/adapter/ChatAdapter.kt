@@ -68,12 +68,12 @@ class ChatAdapter(private val context: Context, private val messageList: ArrayLi
     }
 
     class SendViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
-        val sendMessage: TextView = itemView.findViewById(R.id.send_message_text)
-        val timeTextView : TextView = itemView.findViewById(R.id.send_timestamp_text)
+        val sendMessage: TextView = itemView.findViewById(R.id.txt_message)
+        val timeTextView : TextView = itemView.findViewById(R.id.txt_date)
     }
 
     class ReceiveViewHolder(itemView: View):RecyclerView.ViewHolder(itemView){
-        val receiveMessage: TextView = itemView.findViewById(R.id.receive_message_text)
-        val timeTextView : TextView = itemView.findViewById(R.id.recieve_timestamp_text)
+        val receiveMessage: TextView = itemView.findViewById(R.id.txt_message)
+        val timeTextView : TextView = itemView.findViewById(R.id.txt_date)
     }
 }

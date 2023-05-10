@@ -54,8 +54,10 @@ class ChatFragment : Fragment() {
             reciverUid = it.getString("uid").toString()
             title = it.getString("title").toString()
 
-            //접속자 Uid
-            val senderUid = mAuth.currentUser?.uid
+            var senderUid = it.getString("senderUid")
+            if (senderUid == null) {
+                senderUid = mAuth.currentUser?.uid
+            }
 
 
             //채팅 방

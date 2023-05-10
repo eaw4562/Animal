@@ -64,6 +64,7 @@ class BoardDetailFragment : Fragment() {
                 }
             })
 
+
         return binding.root
     }
 
