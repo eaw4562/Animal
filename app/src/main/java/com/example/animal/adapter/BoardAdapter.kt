@@ -14,6 +14,8 @@ import com.example.animal.DTO.ContentDTO
 import com.example.animal.DTO.Item
 import com.example.animal.R
 import com.google.firebase.storage.FirebaseStorage
+import java.text.NumberFormat
+import java.util.*
 
 class BoardAdapter(private val itemList: MutableList<Item>) : RecyclerView.Adapter<BoardAdapter.ViewHolder>() {
 
@@ -25,7 +27,9 @@ class BoardAdapter(private val itemList: MutableList<Item>) : RecyclerView.Adapt
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = itemList[position]
         holder.title.text = item.title
-        holder.price.text = item.price
+        val priceFormat = NumberFormat.getNumberInstance(Locale.US)
+        val formattedPrice = priceFormat.format(item.price?.toLong())
+        holder.price.text = formattedPrice
         holder.loadImage(item.imageUrl)
         holder.itemView.setOnClickListener {
             val fragment = BoardDetailFragment.newInstance(item.contentUid, item.imageUrl)
@@ -41,6 +45,7 @@ class BoardAdapter(private val itemList: MutableList<Item>) : RecyclerView.Adapt
                 .commit()
         }
     }
+
 
 
     override fun getItemCount(): Int {

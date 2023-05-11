@@ -14,6 +14,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.firestore.FirebaseFirestore
+import java.text.NumberFormat
+import java.util.*
 
 
 class BoardDetailFragment : Fragment() {
@@ -143,7 +145,10 @@ class BoardDetailFragment : Fragment() {
         binding.boardDetailWhere.text = where
         binding.boardDetailSpay.text = spay
         binding.boardDetailContent.text = content
-        binding.boardDetailPrice.text = price
+        val priceFormat = NumberFormat.getNumberInstance(Locale.US)
+        val formattedPrice = priceFormat.format(price?.toLongOrNull() ?: 0)
+        binding.boardDetailPrice.text = formattedPrice
+
 
         // ViewPager 어댑터 설정
         if (imageUrl != null) {

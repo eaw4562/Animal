@@ -56,7 +56,7 @@ class ChatFragment : Fragment() {
 
             var senderUid = it.getString("senderUid")
             if (senderUid == null) {
-                senderUid = reciverUid
+                senderUid = currentUserId
             }
 
 
@@ -121,13 +121,6 @@ class ChatFragment : Fragment() {
 
                     for (postSnapshot in snapshot.children) {
                         val message = postSnapshot.getValue(ChatDTO::class.java)
-                        if (message != null) {
-                            if (message.sendId == reciverUid && message.isRead == false) {
-                                postSnapshot.ref.child("isShown").setValue(true)
-                            } else if (message.sendId == currentUserId && message.isRead == false) {
-                                postSnapshot.ref.child("isShown").setValue(false)
-                            }
-                        }
                         messageList.add(message!!)
                     }
                     chatAdapter.notifyDataSetChanged()

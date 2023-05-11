@@ -47,16 +47,16 @@ class ChatAdapter(
             dateFormat.timeZone = TimeZone.getTimeZone("Asia/Seoul")
             val formattedTime = dateFormat.format(date)
             viewHolder.timeTextView.text = formattedTime
-            viewHolder.isRead.visibility = View.GONE // 보낸 메시지의 isRead는 무조건 true이므로 표시하지 않음
-        } else if (holder.javaClass == ReceiveViewHolder::class.java) {
+            //viewHolder.isRead.visibility = if (currentMessage.isRead == true) View.GONE else View.VISIBLE // isRead 값에 따라 표시 여부 결정
+        } else {
             val viewHolder = holder as ReceiveViewHolder
             viewHolder.receiveMessage.text = currentMessage.message
             val date = Date(currentMessage.timestamp!!)
-            val formattedTime =
-                SimpleDateFormat("HH:mm", Locale.getDefault()).format(date)
+            val formattedTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(date)
             viewHolder.timeTextView.text = formattedTime
-            viewHolder.isRead.visibility = if (currentMessage.sendId != currentUserId && currentMessage.isRead == false) View.VISIBLE else View.GONE // isRead 값에 따라 표시 여부 결정
+            //viewHolder.isRead.visibility = View.GONE // 받은 메시지의 isRead는 무조건 true이므로 표시하지 않음
         }
+
     }
     override fun getItemCount(): Int {
         return messageList.size
