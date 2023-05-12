@@ -108,9 +108,14 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         }
 
 
-        val myProfile = findViewById<ImageButton>(R.id.header_profile)
+        val myProfile = binding.headerProfile
         myProfile.setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.END)
+        }
+
+        val backButton = binding.imgBack
+        backButton.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
         }
 
 
