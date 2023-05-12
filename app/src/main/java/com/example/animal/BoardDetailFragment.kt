@@ -150,10 +150,13 @@ class BoardDetailFragment : Fragment() {
         binding.boardDetailPrice.text = formattedPrice
 
 
+        val dotsIndicator = binding.viewDot
+        val viewPager = binding.boardDetailImages
         // ViewPager 어댑터 설정
         if (imageUrl != null) {
             val adapter = BoardDetailAdapter(mContext, imageUrl!!)
             binding.boardDetailImages.adapter = adapter
+            dotsIndicator.attachTo(viewPager)
         }
         // ViewPager DotIndicator 추후 수정 예정
         // 현재 적용 x
