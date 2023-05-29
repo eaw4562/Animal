@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
-import com.example.animal.DTO.User
+import com.example.animal.dto.User
 import com.example.animal.adapter.BoardDetailAdapter
 import com.example.animal.databinding.FragmentBoardDetailBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView

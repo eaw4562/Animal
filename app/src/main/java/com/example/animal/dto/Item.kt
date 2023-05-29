@@ -1,4 +1,4 @@
-package com.example.animal.DTO
+package com.example.animal.dto
 
 data class Item(
     val title : String?,

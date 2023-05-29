@@ -63,13 +63,40 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 return true
             }
             R.id.board_detail_favorit -> {
-                val favoritFragment = FavoritFragment()
-                supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragmentContainerView, favoritFragment)
-                    .addToBackStack(null)
-                    .commit()
+                val bundle = Bundle()
+                val contentUid: String
+
+                val boardDetailFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView)
+                if(boardDetailFragment is BoardDetailFragment){
+                    contentUid = boardDetailFragment.arguments?.getString("contentUid").toString()
+                } else {
+                    contentUid = "default_contentUid"
+                }
+                bundle.putString("contentUid", contentUid)
+
+                val postDocument = firestore?.collection("images")?.document(contentUid)
+                val uid = auth.currentUser?.uid
+
+                postDocument?.get()?.addOnSuccessListener { document ->
+                    if (document != null) {
+                        val likedUsers = document["likedUsers"] as? MutableList<String> ?: mutableListOf()
+
+                        if (uid in likedUsers) { // 이미 좋아요를 누른 경우
+                            // 좋아요를 취소
+                            likedUsers.remove(uid)
+                            item.setIcon(R.drawable.board_no_favorit) // Update icon to not favorited state
+                        } else { // 좋아요를 누르지 않은 경우
+                            // 좋아요 추가
+                            likedUsers.add(uid!!)
+                            item.setIcon(R.drawable.board_favorit) // Update icon to favorited state
+                        }
+
+                        postDocument.update("likedUsers", likedUsers)
+                    }
+                }
                 return true
             }
+
         }
         return false
     }

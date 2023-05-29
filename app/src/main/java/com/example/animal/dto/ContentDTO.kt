@@ -1,4 +1,4 @@
-package com.example.animal.DTO
+package com.example.animal.dto
 
 data class ContentDTO(
     var title : String? = null,

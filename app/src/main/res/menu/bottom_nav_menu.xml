@@ -24,7 +24,7 @@
         android:id="@+id/board_detail_favorit"
         android:title="찜하기"
         app:showAsAction="ifRoom"
-        android:icon="@drawable/board_favorit"/>
+        android:icon="@drawable/board_no_favorit"/>
 
 
 </menu>

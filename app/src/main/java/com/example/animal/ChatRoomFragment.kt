@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.animal.DTO.ChatRoomDTO
+import com.example.animal.dto.ChatRoomDTO
 import com.example.animal.adapter.ChatRoomAdapter
 import com.example.animal.databinding.FragmentMyChatBinding
 import com.google.firebase.auth.FirebaseAuth

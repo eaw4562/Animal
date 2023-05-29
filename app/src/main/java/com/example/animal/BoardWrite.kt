@@ -13,7 +13,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.animal.adapter.GalleryAdapter
-import com.example.animal.DTO.ContentDTO
+import com.example.animal.dto.ContentDTO
 import com.example.animal.databinding.ActivityBoardWriteBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore

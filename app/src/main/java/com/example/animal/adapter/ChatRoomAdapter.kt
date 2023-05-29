@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.animal.ChatFragment
-import com.example.animal.DTO.ChatRoomDTO
+import com.example.animal.dto.ChatRoomDTO
 import com.example.animal.MainActivity
 import com.example.animal.R
 import java.text.DateFormat

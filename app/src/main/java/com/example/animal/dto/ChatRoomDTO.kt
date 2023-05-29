@@ -1,4 +1,4 @@
-package com.example.animal.DTO
+package com.example.animal.dto
 
 data class ChatRoomDTO(
     val id: String? = null,

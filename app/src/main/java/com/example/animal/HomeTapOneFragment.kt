@@ -10,8 +10,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.animal.adapter.BoardAdapter
-import com.example.animal.DTO.ContentDTO
-import com.example.animal.DTO.Item
+import com.example.animal.dto.ContentDTO
+import com.example.animal.dto.Item
 import com.example.animal.databinding.HomeTapOneFragmentBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.firestore.FirebaseFirestore
@@ -80,6 +80,6 @@ class HomeTapOneFragment : Fragment() {
     }
 
     companion object {
-        private const val TAG = "HomeTapOneFragment"
+        const val TAG = "HomeTapOneFragment"
     }
 }

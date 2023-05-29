@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.animal.DTO.ChatDTO
+import com.example.animal.dto.ChatDTO
 import com.example.animal.R
 import com.google.firebase.auth.FirebaseAuth
 import java.text.SimpleDateFormat

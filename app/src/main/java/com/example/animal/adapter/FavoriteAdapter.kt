@@ -16,10 +16,10 @@ import com.google.firebase.storage.FirebaseStorage
 import java.text.NumberFormat
 import java.util.*
 
-class BoardAdapter(private val itemList: MutableList<Item>) : RecyclerView.Adapter<BoardAdapter.ViewHolder>() {
+class FavoriteAdapter(private val itemList: MutableList<Item>) : RecyclerView.Adapter<FavoriteAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.main_item_view, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.favorite_item_view, parent, false)
         return ViewHolder(view)
     }
 
@@ -52,9 +52,9 @@ class BoardAdapter(private val itemList: MutableList<Item>) : RecyclerView.Adapt
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var image: ImageView = itemView.findViewById(R.id.main_item_image)
-        var title: TextView = itemView.findViewById(R.id.main_item_title)
-        var price: TextView = itemView.findViewById(R.id.main_item_price)
+        var image: ImageView = itemView.findViewById(R.id.favorite_item_image)
+        var title: TextView = itemView.findViewById(R.id.favorite_item_title)
+        var price: TextView = itemView.findViewById(R.id.favorite_item_price)
 
         fun loadImage(url: String) {
             val storageReference = FirebaseStorage.getInstance().getReferenceFromUrl(url)
