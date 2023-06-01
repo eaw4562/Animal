@@ -40,7 +40,7 @@ class FavoriteFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         // Initialize RecyclerView and adapter
-        recyclerView = view.findViewById(R.id.favorite_recycler) // replace with your RecyclerView's ID
+        recyclerView = view.findViewById(R.id.favorite_recycler)
         adapter = FavoriteAdapter(itemList)
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = adapter
@@ -54,7 +54,7 @@ class FavoriteFragment : Fragment() {
 
         userLikesDocument.get().addOnSuccessListener { document ->
             if (document != null && document.exists()) {
-                val likedPosts = document["contentUid"] as? List<String> ?: listOf()
+                val likedPosts = document["likedPosts"] as? List<String> ?: listOf()
                 fetchPosts(likedPosts)
             }
         }
@@ -65,39 +65,29 @@ class FavoriteFragment : Fragment() {
         for (postId in likedPosts) {
             val postDocument = firestore.collection("images").document(postId)
             postDocument.get().addOnSuccessListener { document ->
-                if (itemList.isEmpty()) {
-                    FirebaseFirestore.getInstance().collection("images")
-                        .orderBy("timeStamp", Query.Direction.DESCENDING)
-                        .get()
-                        .addOnSuccessListener { documents ->
-                            for (document in documents) {
-                                val contentDTO = document.toObject(ContentDTO::class.java)
-                                if (contentDTO.title != null && contentDTO.price != null && contentDTO.imageUrl != null) {
-                                    val item = Item(
-                                        contentDTO.title,
-                                        contentDTO.price,
-                                        contentDTO.imageUrl!!,
-                                        contentDTO.contentUid,
-                                        contentDTO.age,
-                                        contentDTO.breed,
-                                        contentDTO.category,
-                                        contentDTO.content,
-                                        contentDTO.gender,
-                                        contentDTO.name,
-                                        contentDTO.price,
-                                        contentDTO.spay,
-                                        contentDTO.vaccine,
-                                        contentDTO.where,
-                                        contentDTO.uid
-                                    )
-                                    itemList.add(item)
-                                }
-                            }
-                            adapter.notifyItemInserted(itemList.size - 1) // Notify the adapter that an item is inserted
-                        }
-                        .addOnFailureListener { exception ->
-                            Log.e(HomeTapOneFragment.TAG, "Error getting documents: ", exception)
-                        }
+                if (document != null && document.exists()) {
+                    val contentDTO = document.toObject(ContentDTO::class.java)
+                    if (contentDTO != null) {
+                        val item = Item(
+                            contentDTO.title,
+                            contentDTO.price,
+                            contentDTO.imageUrl!!,
+                            contentDTO.contentUid,
+                            contentDTO.age,
+                            contentDTO.breed,
+                            contentDTO.category,
+                            contentDTO.content,
+                            contentDTO.gender,
+                            contentDTO.name,
+                            contentDTO.price,
+                            contentDTO.spay,
+                            contentDTO.vaccine,
+                            contentDTO.where,
+                            contentDTO.uid
+                        )
+                        itemList.add(item)
+                        adapter.notifyItemInserted(itemList.size - 1) // Notify the adapter that an item is inserted
+                    }
                 }
             }
         }

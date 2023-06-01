@@ -6,10 +6,13 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.ViewModelProvider
 import com.example.animal.databinding.ActivityMainBinding
+import com.example.animal.dto.LikeViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -21,6 +24,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     var firestore: FirebaseFirestore? = null
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navigationView: NavigationView
+    private val likedViewModel: LikeViewModel by viewModels()
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
@@ -44,15 +48,19 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 val chatFragment = ChatFragment()
                 val bundle = Bundle()
 
-                val boardDetailFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView)
-                if(boardDetailFragment is BoardDetailFragment) {
-                    bundle.putString("contentUid", boardDetailFragment.arguments?.getString("contentUid"))
+                val boardDetailFragment =
+                    supportFragmentManager.findFragmentById(R.id.fragmentContainerView)
+                if (boardDetailFragment is BoardDetailFragment) {
+                    bundle.putString(
+                        "contentUid",
+                        boardDetailFragment.arguments?.getString("contentUid")
+                    )
                     bundle.putString("uid", boardDetailFragment.arguments?.getString("uid"))
                     bundle.putString("title", boardDetailFragment.arguments?.getString("title"))
-                }else{
-                    bundle.putString("contentUid","default_contentUid")
-                    bundle.putString("uid","default_uid")
-                    bundle.putString("title","default_title")
+                } else {
+                    bundle.putString("contentUid", "default_contentUid")
+                    bundle.putString("uid", "default_uid")
+                    bundle.putString("title", "default_title")
                 }
 
                 chatFragment.arguments = bundle
@@ -66,57 +74,61 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 val bundle = Bundle()
                 val contentUid: String
 
-                val boardDetailFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainerView)
-                if(boardDetailFragment is BoardDetailFragment){
+                val boardDetailFragment =
+                    supportFragmentManager.findFragmentById(R.id.fragmentContainerView)
+                if (boardDetailFragment is BoardDetailFragment) {
                     contentUid = boardDetailFragment.arguments?.getString("contentUid").toString()
                 } else {
                     contentUid = "default_contentUid"
                 }
-                bundle.putString("contentUid", contentUid)
 
-                val postDocument = firestore?.collection("images")?.document(contentUid)
-                val uid = auth.currentUser?.uid
+                // 좋아요 버튼 클릭 시 Firestore 업데이트
+                updateLikedPosts(contentUid, item)
 
-                postDocument?.get()?.addOnSuccessListener { document ->
-                    if (document != null) {
-                        val likedUsers = document["likedUsers"] as? MutableList<String> ?: mutableListOf()
-
-                        if (uid in likedUsers) { // 이미 좋아요를 누른 경우
-                            // 좋아요를 취소
-                            likedUsers.remove(uid)
-                            item.setIcon(R.drawable.board_no_favorit) // Update icon to not favorited state
-                        } else { // 좋아요를 누르지 않은 경우
-                            // 좋아요 추가
-                            likedUsers.add(uid!!)
-                            item.setIcon(R.drawable.board_favorit) // Update icon to favorited state
-                        }
-
-                        postDocument.update("likedUsers", likedUsers)
-                    }
-                }
                 return true
             }
-
+            else -> return false
         }
-        return false
     }
 
+    private fun updateLikedPosts(contentUid: String, item: MenuItem) {
+        val userLikesDocument = firestore?.collection("userLikes")?.document(auth.currentUser!!.uid)
+
+        userLikesDocument?.get()?.addOnSuccessListener { document ->
+            if (document != null) {
+                val likedPosts = document["likedPosts"] as? MutableList<String> ?: mutableListOf()
+
+                if (contentUid in likedPosts) {
+                    likedPosts.remove(contentUid)
+                } else {
+                    likedPosts.add(contentUid)
+                }
+                userLikesDocument.set(mapOf("likedPosts" to likedPosts))
+            }
+
+            // 좋아요 상태 업데이트
+            val isLiked = contentUid in (document?.get("likedPosts") as? List<String> ?: emptyList())
+            likedViewModel.toggleLikeStatus()
+
+            // UI 업데이트
+            item.setIcon(if (isLiked) R.drawable.board_no_favorit else R.drawable.board_favorit)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        auth = FirebaseAuth.getInstance() // auth 변수 초기화
+        auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
         binding.mainNav.setOnItemSelectedListener(this)
         ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),1)
 
+
         binding.mainNav.selectedItemId = R.id.home
 
-        // drawerLayout 초기화
         drawerLayout = findViewById(R.id.drawer_layout)
-
         navigationView = findViewById(R.id.navigation_view)
 
         navigationView.setNavigationItemSelectedListener { menuItem ->
@@ -128,12 +140,20 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                         .addToBackStack(null)
                         .commit()
                     drawerLayout.closeDrawer(GravityCompat.END)
-                    return@setNavigationItemSelectedListener true // 여기서 반환 타입을 true로 지정
+                    return@setNavigationItemSelectedListener true
+                }
+                R.id.my_favorit_list -> {
+                    val myFavoriteList = FavoriteFragment()
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragmentContainerView, myFavoriteList)
+                        .addToBackStack(null)
+                        .commit()
+                    drawerLayout.closeDrawer(GravityCompat.END)
+                    return@setNavigationItemSelectedListener true
                 }
             }
-            return@setNavigationItemSelectedListener false // 여기서 반환 타입을 false로 지정
+            return@setNavigationItemSelectedListener false
         }
-
 
         val myProfile = binding.headerProfile
         myProfile.setOnClickListener {
@@ -145,17 +165,14 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             onBackPressedDispatcher.onBackPressed()
         }
 
-
-
         val myAccountTextView = binding.navigationView.getHeaderView(0).findViewById<TextView>(R.id.my_account)
-        val currentUSer = auth.currentUser
+        val currentUser = auth.currentUser
 
-        if(currentUSer != null){
-            val email = currentUSer.email
+        if(currentUser != null){
+            val email = currentUser.email
             myAccountTextView.text = email
         }else{
             myAccountTextView.text ="로그인이 필요합니다."
         }
     }
 }
-

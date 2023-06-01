@@ -6,17 +6,25 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.example.animal.dto.User
 import com.example.animal.adapter.BoardDetailAdapter
 import com.example.animal.databinding.FragmentBoardDetailBinding
+import com.example.animal.dto.LikeViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.getValue
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.text.NumberFormat
 import java.util.*
-
 
 class BoardDetailFragment : Fragment() {
 
@@ -34,11 +42,10 @@ class BoardDetailFragment : Fragment() {
     private var content: String? = ""
     private var price: String? = ""
     private var title: String? = ""
-    var firestore: FirebaseFirestore? = null
+    private var firestore: FirebaseFirestore? = null
     private lateinit var mAuth : FirebaseAuth
     private lateinit var mDbRef : DatabaseReference
-
-
+    private val likeViewModel: LikeViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -48,6 +55,7 @@ class BoardDetailFragment : Fragment() {
         val contentUid = bundle?.getString("contentUid")
         val uid = bundle?.getString("uid")
         val title = bundle?.getString("title")
+
 
         mAuth = FirebaseAuth.getInstance()
         mDbRef = FirebaseDatabase.getInstance().reference
@@ -66,7 +74,6 @@ class BoardDetailFragment : Fragment() {
                 }
             })
 
-
         return binding.root
     }
 
@@ -78,9 +85,36 @@ class BoardDetailFragment : Fragment() {
         bottomNavigation.menu.findItem(R.id.board_detail_favorit).isVisible = true
         bottomNavigation.menu.findItem(R.id.home).isVisible = false
         bottomNavigation.menu.findItem(R.id.home_two).isVisible = false
+
+        val menuItem = bottomNavigation.menu.findItem(R.id.board_detail_favorit)
+        val contentUid = arguments?.getString("contentUid")
+
+        // 비동기 작업 처리
+        viewLifecycleOwner.lifecycleScope.launch {
+            val isLiked = withContext(Dispatchers.IO) {
+                checkLikeStatus(contentUid)
+            }
+            // UI 업데이트
+            updateLikeButtonUI(menuItem, isLiked)
+        }
     }
 
+    private suspend fun checkLikeStatus(contentUid: String?): Boolean {
+        val userLikesDocument = firestore?.collection("userLikes")?.document(mAuth.currentUser!!.uid)
 
+        val document = userLikesDocument?.get()?.await()
+        if (document != null) {
+            val likedPosts = document["likedPosts"] as? List<String> ?: emptyList()
+
+            return contentUid in likedPosts
+        }
+
+        return false
+    }
+
+    private fun updateLikeButtonUI(menuItem: MenuItem, isLiked: Boolean) {
+        menuItem.setIcon(if (isLiked) R.drawable.board_favorit else R.drawable.board_no_favorit)
+    }
 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -103,8 +137,11 @@ class BoardDetailFragment : Fragment() {
         }
         bindData()
         getDataBoard()
+        /*val bottomNavigation = requireActivity().findViewById<BottomNavigationView>(R.id.main_nav)
+        val menuItem = bottomNavigation.menu.findItem(R.id.board_detail_favorit)
+        val contentUid = arguments?.getString("contentUid")
+        updateLikeButtonUI(contentUid, menuItem)*/
     }
-
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -112,6 +149,25 @@ class BoardDetailFragment : Fragment() {
 
         val boardDetailNav = activity?.findViewById<BottomNavigationView>(R.id.main_nav)
         boardDetailNav?.visibility = View.VISIBLE
+    }
+
+
+    override fun onResume() {
+        super.onResume()
+
+        // 좋아요 버튼 상태 업데이트
+        val bottomNavigation = requireActivity().findViewById<BottomNavigationView>(R.id.main_nav)
+        val menuItem = bottomNavigation.menu.findItem(R.id.board_detail_favorit)
+        val contentUid = arguments?.getString("contentUid")
+
+        // 비동기 작업 처리
+        viewLifecycleOwner.lifecycleScope.launch {
+            val isLiked = withContext(Dispatchers.IO) {
+                checkLikeStatus(contentUid)
+            }
+            // UI 업데이트
+            updateLikeButtonUI(menuItem, isLiked)
+        }
     }
 
     override fun onDetach() {
@@ -131,9 +187,7 @@ class BoardDetailFragment : Fragment() {
         // board_detail_chat과 board_detail_favorit 메뉴 항목 보이기
         menu.findItem(R.id.board_detail_chat).isVisible = true
         menu.findItem(R.id.board_detail_favorit).isVisible = true
-
     }
-
 
     private fun bindData() {
         binding.boardDetailName.text = name
@@ -149,7 +203,6 @@ class BoardDetailFragment : Fragment() {
         val formattedPrice = priceFormat.format(price?.toLongOrNull() ?: 0)
         binding.boardDetailPrice.text = formattedPrice
 
-
         val dotsIndicator = binding.viewDot
         val viewPager = binding.boardDetailImages
         // ViewPager 어댑터 설정
@@ -158,23 +211,14 @@ class BoardDetailFragment : Fragment() {
             binding.boardDetailImages.adapter = adapter
             dotsIndicator.attachTo(viewPager)
         }
-        // ViewPager DotIndicator 추후 수정 예정
-        // 현재 적용 x
-      /*  val dotsIndicator = binding.viewDot
-        dotsIndicator.setViewPager2(binding.boardDetailImages)
-        dotsIndicator.setViewPager2(binding.boardDetailImages)
-        dotsIndicator.dotsColor = ContextCompat.getColor(requireContext(), R.color.black)
-        dotsIndicator.selectedDotColor = ContextCompat.getColor(requireContext(), R.color.purple_700)*/
     }
 
-    /**
-     * TODO: 인자값을 매개로 컬렉션에서 값을 가져오는 코드로 바꿀예정
-     *          해결 완료 contentUid 값을 documentId로 저장해 경로 불러옴
-     */
     private fun getDataBoard() {
         firestore = FirebaseFirestore.getInstance()
         val contentUid = arguments?.getString("contentUid")
-        if (contentUid != null) {
+        val uid = FirebaseAuth.getInstance().currentUser?.uid
+
+        if (contentUid != null && uid != null) {
             firestore?.collection("images")?.document(contentUid)
                 ?.get()
                 ?.addOnSuccessListener { document ->
@@ -203,7 +247,23 @@ class BoardDetailFragment : Fragment() {
         }
     }
 
+    /*private fun updateLikeButtonUI(contentUid: String?, menuItem: MenuItem) {
+        likeViewModel.isLiked.observe(viewLifecycleOwner) { isLiked ->
+            menuItem.setIcon(if (isLiked) R.drawable.board_favorit else R.drawable.board_no_favorit)
+        }
 
+        // 초기 상태 설정
+        val userLikesDocument = firestore?.collection("userLikes")?.document(mAuth.currentUser!!.uid)
+
+        userLikesDocument?.get()?.addOnSuccessListener { document ->
+            if (document != null) {
+                val likedPosts = document["likedPosts"] as? List<String> ?: emptyList()
+
+                val isLiked = contentUid in likedPosts
+                likeViewModel.toggleLikeStatus()
+            }
+        }
+    }*/
 
     companion object {
         fun newInstance(contentUid: String?, imageUrl: String?): BoardDetailFragment {

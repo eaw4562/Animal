@@ -1,24 +1,15 @@
 package com.example.animal.dto
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 
 class LikeViewModel : ViewModel() {
-    private val mDbRef = FirebaseFirestore.getInstance()
+    private val _isLiked = MutableLiveData<Boolean>()
+    val isLiked: LiveData<Boolean> get() = _isLiked
 
-    fun addLike(contentUid : String, userId: String){
-        mDbRef.collection("images")
-            .document(contentUid)
-            .collection("likes")
-            .document(userId)
-            .set(mapOf("liked" to true))
-    }
-
-    fun removeLike(contentUid: String, userId: String){
-        mDbRef.collection("images")
-            .document(contentUid)
-            .collection("likes")
-            .document(userId)
-            .delete()
+    fun toggleLikeStatus() {
+        _isLiked.value = _isLiked.value != true
     }
 }

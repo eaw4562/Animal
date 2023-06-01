@@ -58,6 +58,9 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui-ktx:2.5.3'
     implementation 'com.google.firebase:firebase-storage-ktx:20.1.0'
 
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1'
+
 
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
     //Glide 이미지 저장
