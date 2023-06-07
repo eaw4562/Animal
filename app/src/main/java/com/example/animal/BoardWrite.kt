@@ -55,7 +55,7 @@ class BoardWrite : AppCompatActivity() {
         firestore = FirebaseFirestore.getInstance()
         galleryAdapter = GalleryAdapter(imageList, this)
 
-        binding.imageRecyclerView.layoutManager = LinearLayoutManager(this)
+        binding.imageRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding.imageRecyclerView.adapter = galleryAdapter
 
 

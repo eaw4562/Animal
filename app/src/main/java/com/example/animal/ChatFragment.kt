@@ -6,9 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.animal.dto.ChatDTO
 import com.example.animal.adapter.ChatAdapter
 import com.example.animal.databinding.FragmentChatBinding
+import com.example.animal.dto.ChatDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import java.text.SimpleDateFormat
@@ -21,7 +21,7 @@ class ChatFragment : Fragment() {
     private lateinit var mAuth: FirebaseAuth
     private lateinit var mDbRef: DatabaseReference
     private lateinit var currentUserId: String
-    private lateinit var currentUserEmail : String
+    private lateinit var currentUserEmail: String
 
     private lateinit var messageList: ArrayList<ChatDTO>
 
@@ -31,10 +31,10 @@ class ChatFragment : Fragment() {
 
     private lateinit var reciverName: String
     private lateinit var reciverUid: String
-    private lateinit var senderRoom: String //받는 대화방
-    private lateinit var reciverRoom: String //보낸 대화방
-    private lateinit var timestamp : String
-    lateinit var chatRoom : String
+    private lateinit var senderRoom: String
+    private lateinit var reciverRoom: String
+    private lateinit var timestamp: String
+    lateinit var chatRoom: String
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +45,6 @@ class ChatFragment : Fragment() {
         currentUserEmail = mAuth.currentUser?.email ?: ""
         mDbRef = FirebaseDatabase.getInstance().reference
 
-        // 전달 받은 bundle에서 값을 받아옴
         arguments?.let {
             contentUid = it.getString("contentUid").toString()
             reciverUid = it.getString("uid").toString()
@@ -56,13 +55,7 @@ class ChatFragment : Fragment() {
                 senderUid = currentUserId
             }
 
-
-            //채팅 방
             chatRoom = listOf(senderUid, reciverUid).sortedBy { it }.joinToString(separator = "_")
-
-            //받는이 방senderUid
-            //senderRoom = senderUid + "_" + reciverUid
-
         }
     }
 
@@ -72,63 +65,80 @@ class ChatFragment : Fragment() {
     ): View {
         binding = FragmentChatBinding.inflate(layoutInflater)
 
-        // 게시글의 타이틀을 출력
         binding.chatTitleText.text = title
 
-
-        //RecyclerView
         messageList = ArrayList()
-        val chatAdapter: ChatAdapter = ChatAdapter(requireContext(), messageList)
+        val chatAdapter: ChatAdapter = ChatAdapter(requireContext(), messageList, currentUserId)
         binding.chatRecycler.layoutManager = LinearLayoutManager(requireContext())
         binding.chatRecycler.adapter = chatAdapter
 
-
-        // 메시지 전송 버튼에 대한 onClick 이벤트 설정
         binding.chatSendBtn.setOnClickListener {
             val message = binding.chatInputEdit.text.toString()
             val currentTime = System.currentTimeMillis()
             val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA)
             sdf.timeZone = TimeZone.getTimeZone("Asia/Seoul")
             val dateString = sdf.format(currentTime)
-            val messageObject = ChatDTO(currentUserId, message, reciverUid, currentTime, dateString)
+            val messageObject = ChatDTO(
+                currentUserId,
+                message,
+                reciverUid,
+                currentTime,
+                dateString
+            )
 
-            // 데이터 저장
-            val senderChatRef = mDbRef.child("Chat").child("chatRooms").child(chatRoom).child("messages").push()
+            val senderChatRef =
+                mDbRef.child("Chat").child("chatRooms").child(chatRoom).child("messages").push()
 
-            // 데이터 저장
             senderChatRef.setValue(messageObject).addOnSuccessListener {
-                mDbRef.child("Chat").child("chatRooms").child(chatRoom).child("users").child(currentUserId).setValue(true)
-                mDbRef.child("Chat").child("chatRooms").child(chatRoom).child("users").child(reciverUid).setValue(true)
+                mDbRef.child("Chat").child("chatRooms").child(chatRoom).child("users")
+                    .child(currentUserId).setValue(false)
+                mDbRef.child("Chat").child("chatRooms").child(chatRoom).child("users")
+                    .child(reciverUid).setValue(false)
 
-                // 채팅 저장 성공
-                mDbRef.child("Chat").child("chatRooms").child(chatRoom).child("messages").child(senderChatRef.key!!)
-                    .child("isRead").setValue(true)
+                // 상대방이 채팅을 확인한 경우에만 read 값을 변경합니다.
+                if (currentUserId == reciverUid) {
+                    val messageId = senderChatRef.key
+                    messageId?.let {
+                        val messageRef = mDbRef.child("Chat").child("chatRooms").child(chatRoom)
+                            .child("messages").child(it)
+                        messageRef.child("read").setValue(true)
+                    }
+                }
             }
-            //입력값 초기화
+
             binding.chatInputEdit.setText("")
             chatAdapter.notifyDataSetChanged()
-            binding.chatRecycler.scrollToPosition(messageList.size -1)
+            binding.chatRecycler.scrollToPosition(messageList.size - 1)
         }
 
-        //메시지 가져오기
-        mDbRef.child("Chat").child("chatRooms").child(chatRoom).child("messages")
-            .addValueEventListener(object: ValueEventListener{
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    messageList.clear()
+        val messagesRef = mDbRef.child("Chat").child("chatRooms").child(chatRoom).child("messages")
+        messagesRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                messageList.clear()
 
-                    for (postSnapshot in snapshot.children) {
-                        val message = postSnapshot.getValue(ChatDTO::class.java)
-                        messageList.add(message!!)
+                for (postSnapshot in snapshot.children) {
+                    val message = postSnapshot.getValue(ChatDTO::class.java)
+                    messageList.add(message!!)
+
+                    // 상대방이 채팅을 확인한 경우에만 read 값을 변경합니다.
+                    if (currentUserId == message.receiverUid && !message.read) {
+                        val messageId = postSnapshot.key
+                        messageId?.let {
+                            val messageRef = messagesRef.child(it)
+                            messageRef.child("read").setValue(true)
+                        }
                     }
-                    chatAdapter.notifyDataSetChanged()
-                    binding.chatRecycler.scrollToPosition(messageList.size - 1)
                 }
 
-                override fun onCancelled(error: DatabaseError) {
-                }
-            })
+                chatAdapter.notifyDataSetChanged()
+                binding.chatRecycler.scrollToPosition(messageList.size - 1)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+            }
+        })
+
+
         return binding.root
     }
-
-
 }

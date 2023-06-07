@@ -44,11 +44,16 @@ class FavoriteFragment : Fragment() {
         adapter = FavoriteAdapter(itemList)
         recyclerView.layoutManager = LinearLayoutManager(context)
         recyclerView.adapter = adapter
+    }
 
+    override fun onResume() {
+        super.onResume()
         loadFavoritedPosts()
     }
 
     private fun loadFavoritedPosts() {
+        itemList.clear() // Clear the itemList before fetching favorited posts
+
         // Get the user's liked posts
         val userLikesDocument = firestore.collection("userLikes").document(auth.currentUser!!.uid)
 
