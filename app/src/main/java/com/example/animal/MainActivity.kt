@@ -13,6 +13,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import com.example.animal.databinding.ActivityMainBinding
 import com.example.animal.dto.LikeViewModel
+import com.example.animal.service.MyFirebaseMessagingService
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -119,6 +120,9 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        //FCM 설정 Token값 가져오기
+        MyFirebaseMessagingService().getFirebaseToken()
 
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()

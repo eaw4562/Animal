@@ -34,7 +34,7 @@ class ChatRoomAdapter(
         }*/
 
         val otherUserUid = chatRoom.senderUid
-        val meUserUid = chatRoom.reciverUid
+        val meUserUid = chatRoom.receiverUid
         val otherUserEmail = chatRoom.receiverEmail // 수정된 부분
         holder.chatRoomNameTextView.text = otherUserEmail
         holder.lastMessageTextView.text = chatRoom.lastMessage

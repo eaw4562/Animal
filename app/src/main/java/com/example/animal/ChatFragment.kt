@@ -91,9 +91,9 @@ class ChatFragment : Fragment() {
 
             senderChatRef.setValue(messageObject).addOnSuccessListener {
                 mDbRef.child("Chat").child("chatRooms").child(chatRoom).child("users")
-                    .child(currentUserId).setValue(false)
+                    .child(currentUserId).setValue(true)
                 mDbRef.child("Chat").child("chatRooms").child(chatRoom).child("users")
-                    .child(reciverUid).setValue(false)
+                    .child(reciverUid).setValue(true)
 
                 // 상대방이 채팅을 확인한 경우에만 read 값을 변경합니다.
                 if (currentUserId == reciverUid) {
