@@ -17,11 +17,21 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
+    /**
+     * 푸시 알림으로 보낼 수 있는 메시지는 2가지
+     * 1. Notification : 앱이 실행중(포그라운드)일 때만 푸시 알림이 옴
+     * 2. Data : 실행중이거나 백그라운드(앱이 실행중이 아닐때) 알림이 옴 -> 내가 사용할 방식
+     */
     private val TAG = "FirebaseService"
+
+    companion object {
+        var firebaseToken : String? = null
+    }
 
     /** Token 생성 메서드(FirebaseInstanceIdService 사라짐) */
     override fun onNewToken(token: String) {
         Log.d(TAG, "new Token : $token")
+        firebaseToken = token
 
         //토큰 값을 따로 저장
         val pref = this.getSharedPreferences("token", Context.MODE_PRIVATE)
@@ -57,7 +67,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         //RequestCode Id를 고유 값으로 지정하여 알림이 개별 표시
         val uniId: Int = (System.currentTimeMillis() / 7).toInt()
         //일회용 PendingIntent : Intent의 실행 권한을 외부의 어플리케이션에게 위임
-        val intent = Intent(this, LoginActivity::class.java)
+        val intent = Intent(this, MainActivity::class.java)
         //각 ket, value 추가
         for(key in remoteMessage.data.keys){
             intent.putExtra(key,remoteMessage.data.getValue(key))

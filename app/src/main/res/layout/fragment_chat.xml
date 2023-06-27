@@ -56,6 +56,7 @@
             android:layout_height="50dp"
             android:textSize="18sp"
             android:layout_weight="1"
+            android:padding="10dp"
             android:background="@drawable/edit_backgroud"
             android:hint="텍스트 입력"/>
 

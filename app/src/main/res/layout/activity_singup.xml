@@ -23,25 +23,30 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:layout_alignParentBottom="true"
             android:orientation="horizontal">
 
-            <TextView
+  <!--          <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
+                android:layout_marginRight="30dp"
                 android:text="별명: "
                 android:maxLines="1"
                 android:textSize="18sp" />
-
+-->
             <EditText
                 android:id="@+id/edit_sign_nickname"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_marginRight="10dp"
+                android:padding="10dp"
+                android:hint="별명을 입력해주세요"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="40dp"
                 android:maxLines="1"
-                android:background="@null"
+                android:background="@drawable/edit_round"
                 android:layout_height="wrap_content" />
         </LinearLayout>
 
@@ -49,24 +54,29 @@
             android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:layout_alignParentBottom="true"
             android:orientation="horizontal">
 
-            <TextView
+   <!--         <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
+                android:layout_marginRight="20dp"
                 android:text="이메일: "
-                android:textSize="18sp" />
+                android:textSize="18sp" />-->
 
             <EditText
                 android:id="@+id/edit_sign_email"
                 android:layout_width="0dp"
                 android:layout_weight="1"
+                android:hint="이메일을 입력주세요."
+                android:padding="10dp"
                 android:maxLines="1"
-                android:layout_marginRight="10dp"
-                android:background="@null"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="40dp"
+                android:background="@drawable/edit_round"
                 android:layout_height="wrap_content" />
         </LinearLayout>
 
@@ -74,27 +84,31 @@
 
         <LinearLayout
             android:layout_marginTop="10dp"
-
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:layout_alignParentBottom="true"
             android:orientation="horizontal">
 
-            <TextView
+          <!--  <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:text="비밀번호: "
-                android:textSize="18sp" />
+                android:textSize="18sp" />-->
 
             <EditText
                 android:id="@+id/edit_sign_pass"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_marginRight="10dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="40dp"
+                android:hint="비밀번호를 6자리 이상입력해주세요."
+                android:padding="8dp"
                 android:maxLines="1"
-                android:background="@null"
+                android:background="@drawable/edit_round"
                 android:inputType="textPassword"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -103,8 +117,11 @@
             android:layout_marginTop="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:layout_alignParentBottom="true"
             android:orientation="horizontal">
+<!--
 
             <TextView
                 android:layout_width="wrap_content"
@@ -113,14 +130,18 @@
                 android:layout_marginRight="10dp"
                 android:text="비밀번호 확인: "
                 android:textSize="18sp" />
+-->
 
             <EditText
                 android:id="@+id/edit_sign_passcheck"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:layout_marginRight="10dp"
+                android:padding="8dp"
+                android:hint="비밀번호를 다시 한번 입력해주세요."
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="40dp"
                 android:maxLines="1"
-                android:background="@null"
+                android:background="@drawable/edit_round"
                 android:inputType="textPassword"
                 android:layout_height="wrap_content" />
         </LinearLayout>
