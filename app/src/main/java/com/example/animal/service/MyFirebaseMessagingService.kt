@@ -9,106 +9,120 @@ import android.media.RingtoneManager
 import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import com.example.animal.LoginActivity
-import com.example.animal.MainActivity
+import com.example.animal.ChatRoomFragment
 import com.example.animal.R
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
-    /**
-     * 푸시 알림으로 보낼 수 있는 메시지는 2가지
-     * 1. Notification : 앱이 실행중(포그라운드)일 때만 푸시 알림이 옴
-     * 2. Data : 실행중이거나 백그라운드(앱이 실행중이 아닐때) 알림이 옴 -> 내가 사용할 방식
-     */
+
     private val TAG = "FirebaseService"
 
     companion object {
-        var firebaseToken : String? = null
+        private const val CHANNEL_ID = "my_channel"
+
+        var firebaseToken: String? = null
+
+        private var instance: MyFirebaseMessagingService? = null
+
+        fun getInstance(): MyFirebaseMessagingService {
+            if (instance == null) {
+                instance = MyFirebaseMessagingService()
+            }
+            return instance!!
+        }
     }
 
-    /** Token 생성 메서드(FirebaseInstanceIdService 사라짐) */
     override fun onNewToken(token: String) {
         Log.d(TAG, "new Token : $token")
         firebaseToken = token
 
-        //토큰 값을 따로 저장
-        val pref = this.getSharedPreferences("token", Context.MODE_PRIVATE)
+        val pref = getSharedPreferences("token", Context.MODE_PRIVATE)
         val editor = pref.edit()
         editor.putString("token", token).apply()
         editor.commit()
-        Log.i(TAG, "성공적으로 토큰을 저장함")
+        Log.i(TAG, "Successfully saved the token")
     }
 
-    /**메시지 수신 메서드(포그라운드) */
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        Log.d(TAG, "From : " + remoteMessage!!.from)
+        Log.d(TAG, "From: ${remoteMessage.from}")
 
-        //Notification 메시지를 수신할 경우
-        //reomteMessage.notifivation?.bofy!! 여기에 내용이 저장되잇음
-        //Log.d(TAG, "Notification Message Body : " + remotMessage.notification?.body!!)
-
-        //받은 remoteMessage의 값 출력해보기. 데이터메시지 / 알림메시지
-        Log.d(TAG,"Meesage data : ${remoteMessage.data}")
-        Log.d(TAG, "Meesage noti : ${remoteMessage.notification}")
-
-        if(remoteMessage.data.isNotEmpty()){
-            //알림 생성
-            sendNotification(remoteMessage)
-            //Log.d(TAG, remoteMessage.data["title"].toString())
-            //Log.d(TAG, remoteMessage.data["body"].toString())
-        }else{
-            Log.e(TAG, "data가 비어있습니다. 메시지를 수신하지 못했습니다.")
+        if (remoteMessage.data.isNotEmpty()) {
+            val uid = remoteMessage.data["uid"] ?: return
+            val message = remoteMessage.data["message"] ?: return
+            val nickname = remoteMessage.data["nickname"] ?: return
+            sendNotificationToUser(uid, message, applicationContext)
+        } else {
+            Log.e(TAG, "Data is empty. Failed to receive the message.")
         }
         super.onMessageReceived(remoteMessage)
     }
-    private fun sendNotification(remoteMessage: RemoteMessage){
-        //RequestCode Id를 고유 값으로 지정하여 알림이 개별 표시
-        val uniId: Int = (System.currentTimeMillis() / 7).toInt()
-        //일회용 PendingIntent : Intent의 실행 권한을 외부의 어플리케이션에게 위임
-        val intent = Intent(this, MainActivity::class.java)
-        //각 ket, value 추가
-        for(key in remoteMessage.data.keys){
-            intent.putExtra(key,remoteMessage.data.getValue(key))
-        }
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)//Activity stack 을 경로만 남김 (A-B-C-D-B => A-B)
 
-        //23.05.22 Android 최신버전 대응 (FLAG_MUTABLE, FLAG_IMMUTABLE)
-        //PendingIntent.FLAG_MUTABLE은 PendingIntent의 내용을 변경할 수 있도록 허용, PendingIntent.FLAG_IMMUTABLE은 PendingIntent의 내용을 변경할 수 없음
-        //val pendingIntent = PendingIntent.getActivity(this, uniId, intent, PendingIntent.FLAG_ONE_SHOT)
-        val pendingIntent = PendingIntent.getActivity(this, uniId, intent,
-        PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_MUTABLE)
+    fun sendNotificationToUser(reciverUid: String, message: String, context: Context) {
+        val dbRef = FirebaseDatabase.getInstance().reference
+        val userRef = dbRef.child("user").child(reciverUid).child("FCMToken")
+        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val fcmToken = snapshot.getValue(String::class.java)
+                if (fcmToken != null) {
+                    val remoteMessage = RemoteMessage.Builder("my_sender_id")
+                        .setMessageId("my_message_id")
+                        .addData("uid", reciverUid)
+                        .addData("message", message)
+                        .addData("nickname", "MyNickname")
+                        .build()
+                    sendNotification(remoteMessage, context)
+                } else {
+                    Log.e(TAG, "FCM Token not found for the user with UID: $reciverUid")
+                }
+            }
 
-        //알림 채널 이름
-        val channelId = "my_channel"
-        //알림 소리
-        val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-
-        //알림에 대한 UI 정보, 작업
-        val notificationBuilder = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.mipmap.ic_launcher) //아이콘 설정
-            .setContentTitle(remoteMessage.data["title"].toString()) //제목
-            .setContentText(remoteMessage.data["body"].toString()) //메시지 내용
-            .setAutoCancel(true) //알림클릭시 삭제여부
-            .setSound(soundUri)
-            .setContentIntent(pendingIntent) //알림 실행 시 Intent
-
-        val notificationManaget = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-        //오레오 버전 이후에는 채널이 필요
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(channelId, "Notice", NotificationManager.IMPORTANCE_DEFAULT)
-            notificationManaget.createNotificationChannel(channel)
-        }
-        //알림 생성
-        notificationManaget.notify(uniId, notificationBuilder.build())
+            override fun onCancelled(error: DatabaseError) {
+                Log.e(TAG, "Failed to retrieve FCM Token")
+            }
+        })
     }
-    /**Token 가져오기 */
+
+    private fun sendNotification(remoteMessage: RemoteMessage, context: Context) {
+        val channelId = CHANNEL_ID
+        val soundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        val uid = remoteMessage.data["uid"]
+        val message = remoteMessage.data["message"]
+        val nickname = remoteMessage.data["nickname"]
+
+        val notificationBuilder = NotificationCompat.Builder(context, channelId)
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setContentTitle(nickname)
+            .setContentText(message)
+            .setAutoCancel(true)
+            .setSound(soundUri)
+
+        val intent = Intent(context, ChatRoomFragment::class.java)
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            0,
+            intent,
+            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE,
+            null
+        )
+
+        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(channelId, "Notice", NotificationManager.IMPORTANCE_DEFAULT)
+            notificationManager.createNotificationChannel(channel)
+        }
+        notificationManager.notify(0, notificationBuilder.build())
+    }
+
     fun getFirebaseToken() {
-        //비동기 방식
         FirebaseMessaging.getInstance().token.addOnSuccessListener {
-            Log.d(TAG,"token=${it}")
+            Log.d(TAG, "token=$it")
         }
     }
 }

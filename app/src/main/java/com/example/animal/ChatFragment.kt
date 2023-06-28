@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.animal.adapter.ChatAdapter
 import com.example.animal.databinding.FragmentChatBinding
 import com.example.animal.dto.ChatDTO
+import com.example.animal.service.MyFirebaseMessagingService
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import java.text.SimpleDateFormat
@@ -44,6 +45,7 @@ class ChatFragment : Fragment() {
         currentUserId = mAuth.currentUser?.uid ?: ""
         currentUserEmail = mAuth.currentUser?.email ?: ""
         mDbRef = FirebaseDatabase.getInstance().reference
+        uid = mAuth.currentUser?.uid ?: ""
 
         arguments?.let {
             contentUid = it.getString("contentUid").toString()
@@ -57,6 +59,10 @@ class ChatFragment : Fragment() {
 
             chatRoom = listOf(senderUid, reciverUid).sortedBy { it }.joinToString(separator = "_")
         }
+
+        val firebaseService = MyFirebaseMessagingService.getInstance()
+        firebaseService.sendNotificationToUser(reciverUid, "", requireContext())
+
     }
 
     override fun onCreateView(
@@ -94,6 +100,9 @@ class ChatFragment : Fragment() {
                     .child(currentUserId).setValue(true)
                 mDbRef.child("Chat").child("chatRooms").child(chatRoom).child("users")
                     .child(reciverUid).setValue(true)
+
+                val firebaseService = MyFirebaseMessagingService.getInstance()
+                firebaseService.sendNotificationToUser(reciverUid, message, requireContext())
 
                 // 상대방이 채팅을 확인한 경우에만 read 값을 변경합니다.
                 if (currentUserId == reciverUid) {
