@@ -5,11 +5,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.animal.adapter.ChatAdapter
 import com.example.animal.databinding.FragmentChatBinding
 import com.example.animal.dto.ChatDTO
-import com.example.animal.service.MyFirebaseMessagingService
+import com.example.animal.fcm.FirebaseViewModel
+import com.example.animal.fcm.NotificationBody
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 import java.text.SimpleDateFormat
@@ -30,13 +32,25 @@ class ChatFragment : Fragment() {
     private lateinit var uid: String
     private lateinit var title: String
 
-    private lateinit var reciverName: String
-    private lateinit var reciverUid: String
+    private lateinit var recieverName: String
+    private lateinit var recieverUid: String
     private lateinit var senderRoom: String
-    private lateinit var reciverRoom: String
+    private lateinit var recieverRoom: String
     private lateinit var timestamp: String
     lateinit var chatRoom: String
 
+    private val firebaseViewModel : FirebaseViewModel by viewModels()
+
+    // 현재 유저 닉네임
+    private var nickname = ""
+
+    // 상대방 토큰
+    private var token = ""
+
+
+    /*
+        private lateinit var notificationSender: NotificationSender
+    */
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,10 +60,11 @@ class ChatFragment : Fragment() {
         currentUserEmail = mAuth.currentUser?.email ?: ""
         mDbRef = FirebaseDatabase.getInstance().reference
         uid = mAuth.currentUser?.uid ?: ""
+        recieverName = mAuth.currentUser?.email ?: ""
 
         arguments?.let {
             contentUid = it.getString("contentUid").toString()
-            reciverUid = it.getString("uid").toString()
+            recieverUid = it.getString("uid").toString()
             title = it.getString("title").toString()
 
             var senderUid = it.getString("senderUid")
@@ -57,11 +72,13 @@ class ChatFragment : Fragment() {
                 senderUid = currentUserId
             }
 
-            chatRoom = listOf(senderUid, reciverUid).sortedBy { it }.joinToString(separator = "_")
+            chatRoom = listOf(senderUid, recieverUid).sortedBy { it }.joinToString(separator = "_")
         }
 
-        val firebaseService = MyFirebaseMessagingService.getInstance()
-        firebaseService.sendNotificationToUser(reciverUid, "", requireContext())
+/*
+         notificationSender = NotificationSender("http://localhost:3000/")
+*/
+
 
     }
 
@@ -78,6 +95,22 @@ class ChatFragment : Fragment() {
         binding.chatRecycler.layoutManager = LinearLayoutManager(requireContext())
         binding.chatRecycler.adapter = chatAdapter
 
+        val fcmRef = mDbRef.child("user").child(recieverUid)
+
+        fcmRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val userData = snapshot.value as? Map<String, Any>
+                if(userData != null) {
+                     token = userData["FCMToken"] as? String ?: ""
+                     nickname = userData["nickname"] as? String ?: ""
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                println("데이터베이스에서 데이터를 가져오는 도중 오류가 발생했습니다: ${error.message}")
+            }
+        })
+
         binding.chatSendBtn.setOnClickListener {
             val message = binding.chatInputEdit.text.toString()
             val currentTime = System.currentTimeMillis()
@@ -87,11 +120,10 @@ class ChatFragment : Fragment() {
             val messageObject = ChatDTO(
                 currentUserId,
                 message,
-                reciverUid,
+                recieverUid,
                 currentTime,
                 dateString
             )
-
             val senderChatRef =
                 mDbRef.child("Chat").child("chatRooms").child(chatRoom).child("messages").push()
 
@@ -99,13 +131,17 @@ class ChatFragment : Fragment() {
                 mDbRef.child("Chat").child("chatRooms").child(chatRoom).child("users")
                     .child(currentUserId).setValue(true)
                 mDbRef.child("Chat").child("chatRooms").child(chatRoom).child("users")
-                    .child(reciverUid).setValue(true)
+                    .child(recieverUid).setValue(true)
 
-                val firebaseService = MyFirebaseMessagingService.getInstance()
-                firebaseService.sendNotificationToUser(reciverUid, message, requireContext())
+
+                // FCM 전송하기
+                val data = NotificationBody.NotificationData(getString(R.string.app_name)
+                    ,nickname ,binding.chatInputEdit.text.toString())
+                val body = NotificationBody(token,data)
+                firebaseViewModel.sendNotification(body)
 
                 // 상대방이 채팅을 확인한 경우에만 read 값을 변경합니다.
-                if (currentUserId == reciverUid) {
+                if (currentUserId == recieverUid) {
                     val messageId = senderChatRef.key
                     messageId?.let {
                         val messageRef = mDbRef.child("Chat").child("chatRooms").child(chatRoom)

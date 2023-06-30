@@ -46,6 +46,7 @@ class BoardDetailFragment : Fragment() {
     private lateinit var mAuth : FirebaseAuth
     private lateinit var mDbRef : DatabaseReference
     private val likeViewModel: LikeViewModel by activityViewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

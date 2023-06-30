@@ -30,7 +30,7 @@ class ChatRoomAdapter(
         /*val otherUserUid = if (chatRoom.senderUid == currentUserUid) {
             chatRoom.senderUid
         } else {
-            chatRoom.reciverUid
+            chatRoom.receiverUid
         }*/
 
         val otherUserUid = chatRoom.senderUid
