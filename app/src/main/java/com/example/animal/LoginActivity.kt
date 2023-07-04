@@ -7,8 +7,9 @@ import android.util.Log
 import android.view.KeyEvent
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import com.example.animal.MainActivity
+import com.example.animal.SingupActivity
 import com.example.animal.databinding.ActivityLoginBinding
-import com.example.animal.dto.User
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
@@ -20,7 +21,6 @@ class LoginActivity : AppCompatActivity() {
     lateinit var fauth: FirebaseAuth
     lateinit var googleSignInClient: GoogleSignInClient
     var TAG = "LoginActivity"
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         binding = ActivityLoginBinding.inflate(layoutInflater)
@@ -39,6 +39,7 @@ class LoginActivity : AppCompatActivity() {
             val intent : Intent = Intent(this@LoginActivity, SingupActivity::class.java)
             startActivity(intent)
         }
+
     }
 
     private fun login(email: String, password: String){
@@ -71,9 +72,8 @@ class LoginActivity : AppCompatActivity() {
             }
             false
         }
+
     }
-
-
     private fun getAndSaveFCMToken() {
         // Firebase Cloud Messaging에서 토큰 가져오기
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->

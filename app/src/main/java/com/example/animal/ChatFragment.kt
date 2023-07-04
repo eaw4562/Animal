@@ -1,6 +1,7 @@
 package com.example.animal
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -97,6 +98,7 @@ class ChatFragment : Fragment() {
 
         val fcmRef = mDbRef.child("user").child(recieverUid)
 
+
         fcmRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val userData = snapshot.value as? Map<String, Any>
@@ -104,12 +106,21 @@ class ChatFragment : Fragment() {
                      token = userData["FCMToken"] as? String ?: ""
                      nickname = userData["nickname"] as? String ?: ""
                 }
+                Log.d("FCM", "Token: $token")
             }
 
             override fun onCancelled(error: DatabaseError) {
                 println("데이터베이스에서 데이터를 가져오는 도중 오류가 발생했습니다: ${error.message}")
             }
         })
+
+        firebaseViewModel.myResponse.observe(viewLifecycleOwner) { response ->
+            if (response.isSuccessful) {
+                Log.d("Notification Status", "Notification sent successfully")
+            } else {
+                Log.d("Notification Status", "Failed to send notification: ${response.errorBody()}")
+            }
+        }
 
         binding.chatSendBtn.setOnClickListener {
             val message = binding.chatInputEdit.text.toString()
@@ -136,8 +147,9 @@ class ChatFragment : Fragment() {
 
                 // FCM 전송하기
                 val data = NotificationBody.NotificationData(getString(R.string.app_name)
-                    ,nickname ,binding.chatInputEdit.text.toString())
+                    ,nickname ,message)
                 val body = NotificationBody(token,data)
+                Log.d("message","${body.data}")
                 firebaseViewModel.sendNotification(body)
 
                 // 상대방이 채팅을 확인한 경우에만 read 값을 변경합니다.

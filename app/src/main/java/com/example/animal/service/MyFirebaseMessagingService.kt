@@ -72,7 +72,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
         ) // 일회성
 
-        val channelId = "channel" // 채널 아이디
+        val channelId = "my_channel" // 채널 아이디
         val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION) // 소리
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
             .setContentTitle(title) // 제목
