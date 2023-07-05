@@ -1,6 +1,4 @@
 # Pet Bulletin Board
-blog : https://velog.io/@eh9797
-
 https://github.com/eaw4562/Animal/assets/83947266/b69a6749-990e-4da2-be12-2701d6189367
 
 
@@ -32,3 +30,5 @@ minSdkVersion 26
 targetSdkVersion 33
 
 
+## blog
+blog : https://velog.io/@eh9797
