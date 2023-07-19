@@ -1,5 +1,8 @@
 # Pet Bulletin Board
-https://github.com/eaw4562/Animal/assets/83947266/b69a6749-990e-4da2-be12-2701d6189367
+
+
+https://github.com/eaw4562/Animal/assets/83947266/d121ea3f-588a-4348-850f-405021a0cbb0
+
 
 
 This app is for membership registration and login.
