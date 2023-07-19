@@ -1,17 +1,20 @@
 package com.example.animal
 
 import android.Manifest
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.example.animal.databinding.ActivityMainBinding
 import com.example.animal.dto.LikeViewModel
-import com.example.animal.service.MyFirebaseMessagingService
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
@@ -151,6 +154,13 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                     drawerLayout.closeDrawer(GravityCompat.END)
                     return@setNavigationItemSelectedListener true
                 }
+                R.id.my_account_logout -> {
+                    FirebaseAuth.getInstance().signOut()
+                    val intent : Intent = Intent(this@MainActivity, LoginActivity::class.java)
+                    startActivity(intent)
+                    Toast.makeText(this, "로그아웃 성공", Toast.LENGTH_SHORT).show()
+                    finish()
+                }
             }
             return@setNavigationItemSelectedListener false
         }
@@ -173,6 +183,14 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             myAccountTextView.text = email
         }else{
             myAccountTextView.text ="로그인이 필요합니다."
+        }
+        binding.imgShare.setOnClickListener {
+                    val sendIntent = Intent()
+                    sendIntent.action = Intent.ACTION_SEND
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, "Dynamic Link 추가 예정입니다.")
+                    sendIntent.type = "text/plain"
+                    val shareIntent = Intent.createChooser(sendIntent, null)
+                    startActivity(shareIntent)
         }
     }
 }
